@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="mg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booyah Store - Historique</title>
+    <!-- Font Awesome ho an'ny icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { 
+            font-family: sans-serif; 
+            background: #000b1e; /* Loko manga tsy miova amin'ny Dark Blue mode */
+            animation: fadeIn 0.8s ease-out; /* Animation rehefa misokatra ny pejy */
+            color: white; padding: 20px; text-align: center; 
+            min-height: 100vh; /* Mba ho feno ny haavony */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.3s; /* Transition ho an'ny mode */
+        }
+        /* Light Mode Styles */
+        body.light-mode {
+            background-color: #e0e7eb; /* Manga maivana kokoa */
+            color: #1a1a1a;
+        }
+        body.light-mode .header { color: #0056b3; } /* Loko manga maizina kokoa */
+        body.light-mode .order-card { background: #ffffff; border-color: #ccc; }
+        body.light-mode .back-link { background: #ffffff; border-color: #ccc; color: #1a1a1a; }
+        body.light-mode .mode-btn { background: #e0e7eb; border-color: #ccc; color: #1a1a1a; }
+
+        /* Dark Blue Mode Styles (default) */
+        body.dark-blue-mode {
+            background-color: #000b1e;
+            color: #e0f7ff;
+        }
+        body.dark-blue-mode .header { color: #00d4ff; }
+        body.dark-blue-mode .order-card { background: #2a2a2a; border-color: #444; }
+        body.dark-blue-mode .back-link { background: #2a2a2a; border-color: #444; color: white; }
+        body.dark-blue-mode .mode-btn { background: #333; border-color: #555; color: white; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .main-wrapper {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+        }
+        .mode-container {
+            display: flex;
+            gap: 8px;
+            position: absolute;
+            left: 20px;
+            top: 25px;
+        }
+        /* Icon Colors */
+        .fa-sun { color: #ffae00; }
+        .fa-moon { color: #00d4ff; }
+
+        .mode-btn {
+            background: #333;
+        }
+        .mode-btn {
+            background: #333;
+            border: 1px solid #555;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .mode-btn:hover { background: #444; }
+        .btn-delete-all {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: 0.3s;
+        }
+        .btn-delete-all:hover { background: #cc0000; }
+        .order-card { 
+            background: #2a2a2a; 
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #444; 
+            border-radius: 10px; 
+            padding: 15px; 
+            margin-bottom: 15px; 
+            text-align: left; 
+            width: 100%; /* Mba ho feno ny sakany */
+            box-sizing: border-box;
+        }
+        .status-attente { color: #ffcc00; font-weight: bold; } /* Jaune */
+        .status-termine { color: #00ff88; font-weight: bold; } /* Maitso/Maintsy */
+        .status-rejete { color: #ff4444; font-weight: bold; } /* Mena */
+
+        .header { color: #00d4ff; margin-bottom: 20px; }
+        .status-online { color: #28a745; font-weight: bold; }
+        .status-offline { color: #ff4444; font-weight: bold; }
+        .back-link { color: #888; text-decoration: none; display: block; margin-bottom: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="main-wrapper">
+        <div class="mode-container">
+            <button class="mode-btn" onclick="setMode('light')"><i class="fa-solid fa-sun"></i></button>
+            <button class="mode-btn" onclick="setMode('dark-blue')"><i class="fa-solid fa-moon"></i></button>
+        </div>
+        <div style="position: absolute; right: 20px; top: 25px; font-size: 0.8rem; color: #aaa;">
+            Admin: <span id="adminStatusDisplay" class="status-offline">...</span>
+        </div>
+        <div onclick="navigateTo('index.html')" class="back-link"><i class="fa-solid fa-arrow-left"></i> Hiverina</div>
+        <h1 class="header">Ny Kaomandiko</h1>
+        <button id="deleteBtn" class="btn-delete-all" onclick="clearHistory()" style="display: none;">Fafao ny tantara rehetra</button>
+        <div id="historyList">Mampiditra tantara...</div>
+    </div>
+
+    <script>
+        // Navigation JS
+        function navigateTo(url) {
+            window.location.href = url;
+        }
+
+        // Mode Management
+        function setMode(mode) {
+            document.body.classList.remove('light-mode', 'dark-blue-mode');
+            if (mode === 'light') {
+                document.body.classList.add('light-mode');
+            } else if (mode === 'dark-blue') {
+                document.body.classList.add('dark-blue-mode');
+            }
+            localStorage.setItem('theme', mode);
+        }
+
+        // Sync theme across tabs
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'theme') setMode(e.newValue);
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'dark-blue';
+            setMode(savedTheme);
+        });
+    </script>
+    <script type="module">
+        import { supabase } from './supabaseClient.js'
+
+        // Common function for updating admin status UI
+        function updateAdminUI(isOnline) {
+            const display = document.getElementById('adminStatusDisplay');
+            if (display) {
+                display.innerText = isOnline ? "En ligne" : "Hors ligne";
+                display.className = isOnline ? "status-online" : "status-offline";
+            }
+        }
+
+        // Function to fetch initial admin status
+        async function fetchAdminStatus() {
+            const { data } = await supabase.from('admin').select('online').eq('id', 'status').single();
+            updateAdminUI(data?.online);
+        }
+        fetchAdminStatus();
+
+        // Realtime listener for Admin Status
+        supabase.channel('admin_changes')
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'admin', filter: 'id=eq.status' },
+            payload => updateAdminUI(payload.new.online))
+            .subscribe();
+
+        const userUid = localStorage.getItem('userUid');
+
+        window.clearHistory = async function() {
+            if (confirm("Tena hovafanao ve ny tantara rehetra?")) {
+                const { error } = await supabase.from('orders').delete().eq('uid', userUid);
+                if (error) {
+                    alert("Nisy olana tamin'ny famafana.");
+                } else {
+                    alert("Voafafa ny tantara.");
+                    loadFullHistory();
+                }
+            }
+        }
+
+        if (!userUid) {
+            document.getElementById('historyList').innerHTML = "Tsy mbola misy tantara hitany. Manaova commande aloha!";
+        } else {
+            async function loadFullHistory() {
+                const list = document.getElementById('historyList');
+                
+                const { data: orders, error } = await supabase.from('orders')
+                    .select('*')
+                    .eq('uid', userUid)
+                    .order('created_at', { ascending: false });
+
+                if (orders) {
+                    list.innerHTML = "";
+                    if (orders.length === 0) {
+                        list.innerHTML = "Tsy mbola nanao commande ianao.";
+                        document.getElementById('deleteBtn').style.display = 'none';
+                        return;
+                    }
+                    document.getElementById('deleteBtn').style.display = 'inline-block';
+                    orders.forEach((order) => {
+                        const card = document.createElement('div');
+                        card.className = 'order-card';
+                        let statusClass = "status-attente";
+                        if (order.status === "Terminé") statusClass = "status-termine";
+                        if (order.status === "Rejeté") statusClass = "status-rejete";
+                        
+                        card.innerHTML = `
+                            <div style="display:flex; justify-content:space-between">
+                                <span><strong>${order.pack}</strong></span>
+                                <span class="${statusClass}">${order.status}</span>
+                            </div>
+                            <div style="font-size:0.7rem; color:#888; margin-top:2px">
+                                <i class="fa-solid fa-clock"></i> ${new Date(order.created_at).toLocaleString('fr-FR')}
+                            </div>
+                            <div style="font-size:0.85rem; color:#aaa; margin-top:5px">
+                                Laharana: ${order.phone} | Total: ${order.total} Ar
+                            </div>
+                        `;
+                        list.appendChild(card);
+                    });
+                } else {
+                    list.innerHTML = "Nisy olana tamin'ny famakiana ny tantara.";
+                }
+            }
+            loadFullHistory();
+            // Realtime update
+            supabase.channel('history_sync').on('postgres_changes', { event: '*', schema: 'public', table: 'orders', filter: `uid=eq.${userUid}` }, loadFullHistory).subscribe();
+        }
+    </script>
+</body>
+</html>
