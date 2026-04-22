@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="mg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booyah Store - Misaotra</title>
+    <!-- Google Fonts & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { 
+            margin: 0; padding: 0; 
+            font-family: 'Rajdhani', sans-serif; 
+            background: radial-gradient(circle at center, #001a3d 0%, #000b1e 100%);
+            background-size: 400% 400%;
+            color: white; text-align: center; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-height: 100vh; padding: 20px;
+        }
+
+        /* Reveal Animation */
+        .reveal { opacity: 1; transform: translateY(0); }
+
+        .main-wrapper { width: 100%; max-width: 600px; position: relative; padding-top: 20px; }
+
+        .success-icon { 
+            font-size: 6rem; color: #00ff88; margin-bottom: 20px; 
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+
+        h1 { color: #00d4ff; margin-bottom: 10px; font-family: 'Orbitron', sans-serif; text-transform: uppercase; }
+        p { color: #aaa; margin-bottom: 30px; padding: 0 20px; }
+        .order-summary {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            border: 2px solid #00d4ff;
+            padding: 30px;
+            border-radius: 25px;
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            box-sizing: border-box;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3), inset 0 0 15px rgba(0, 212, 255, 0.1);
+            position: relative;
+        }
+        .order-summary::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, transparent, #00d4ff, transparent);
+            border-radius: 25px 25px 0 0;
+        }
+        
+        .summary-item { margin-bottom: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 10px; }
+        .summary-item:last-child { border-bottom: none; }
+        .summary-label { display: block; font-size: 0.7rem; color: #00d4ff; text-transform: uppercase; letter-spacing: 1px; }
+        .summary-value { display: block; font-size: 1rem; color: #fff; font-weight: bold; }
+        .btn-container { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 450px; }
+        .nav-btn {
+            padding: 15px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1);
+            text-decoration: none; font-weight: bold; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+        .btn-history { background: #00d4ff; color: #000; border-color: #00d4ff; box-shadow: 0 8px 20px rgba(0, 212, 255, 0.4); }
+        .btn-home { background: rgba(255, 255, 255, 0.07); color: white; }
+        .nav-btn:hover { transform: translateY(-5px) scale(1.02); filter: brightness(1.2); }
+    </style>
+</head>
+<body>
+    <div class="main-wrapper">
+        <div class="success-icon reveal"><i class="fa-solid fa-circle-check"></i></div>
+        <h1 class="reveal">Misaotra betsaka!</h1>
+        <p class="reveal" style="font-size: 1.2rem; color: #00d4ff; font-weight: bold;">merci d'acheter des diamant sur boooyahstore</p>
+        <p class="reveal">Voaray ny kaomandinao. Azonao jerena ao amin'ny Historique ao amin'ny Accueil ny fivoarany.</p>
+
+        <div class="order-summary reveal">
+            <div class="summary-item">
+                <span class="summary-label">Player ID (UID)</span>
+                <span class="summary-value" id="res-uid">...</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Pseudo (Nom FF)</span>
+                <span class="summary-value" id="res-pseudo">...</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">ID Transaction</span>
+                <span class="summary-value" id="res-tid" style="font-family: monospace;">...</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Pack voafidy</span>
+                <span class="summary-value" id="res-pack">...</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Saran'ny baiko</span>
+                <span class="summary-value" id="res-total" style="color: #00ff88; font-size: 1.2rem;">0 Ar</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Laharana finday (Nandefasana)</span>
+                <span class="summary-value" id="res-phone">...</span>
+            </div>
+            <div class="summary-item" style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 10px;">
+                <span class="summary-label">Contact Store</span>
+                <span class="summary-value" style="color: #00d4ff;">032 22 231 28</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Daty sy Lera</span>
+                <span class="summary-value" id="current-time">...</span>
+            </div>
+        </div>
+
+        <div class="btn-container reveal">
+            <div onclick="navigateTo('index.html')" class="nav-btn btn-home">Hiverina amin'ny Accueil</div>
+        </div>
+    </div>
+
+    <script>
+        // Redirection JS
+        function navigateTo(url) {
+            window.location.href = url;
+        }
+
+        // Mode Management (mitovy amin'ny index.html)
+        function setMode(mode) {
+            document.body.classList.remove('light-mode', 'dark-blue-mode');
+            if (mode === 'light') {
+                document.body.classList.add('light-mode');
+            } else if (mode === 'dark-blue') {
+                document.body.classList.add('dark-blue-mode');
+            }
+            localStorage.setItem('theme', mode);
+        }
+
+        // Sync theme across tabs
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'theme') setMode(e.newValue);
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'dark-blue';
+            setMode(savedTheme);
+        });
+    </script>
+    <script type="module">
+        // Fakana ny antsipiriany avy amin'ny URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const tid = urlParams.get('tid');
+        const pack = urlParams.get('pack');
+        const total = urlParams.get('total');
+        const uid = urlParams.get('uid');
+        const pseudo = urlParams.get('pseudo');
+        const phone = urlParams.get('phone');
+
+        document.getElementById('res-tid').innerText = tid || '-';
+        document.getElementById('res-pack').innerText = pack || '-';
+        document.getElementById('res-total').innerText = total ? parseInt(total).toLocaleString() + ' Ar' : '0 Ar';
+        document.getElementById('res-uid').innerText = uid || '-';
+        document.getElementById('res-pseudo').innerText = pseudo || '-';
+        document.getElementById('res-phone').innerText = phone || '-';
+
+        // Fanavaozana ny lera sy daty
+        const updateTime = () => {
+            document.getElementById('current-time').innerText = new Date().toLocaleString('fr-FR');
+        };
+        updateTime();
+    </script>
+</body>
+</html>
