@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="mg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booyah Store - Tarif</title>
+    <!-- Google Fonts CDN -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome CDN ho an'ny Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Rajdhani', sans-serif;
+            background: #0d1117; /* Loko maizina maoderina kokoa (Dark Grey-Black) */
+            animation: fadeIn 0.8s ease-out;
+            color: white;
+            text-align: center;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Light Mode Styles - Mitovy amin'ny index.html */
+        body.light-mode {
+            background-color: #e0e7eb;
+            color: #1a1a1a;
+        }
+        body.light-mode .header-oval {
+            background-color: #ffffff;
+            border-color: #ccc;
+        }
+        body.light-mode .store-name { color: #1a1a1a; }
+        body.light-mode .search-bar { background: #f0f0f0; color: #333; border-color: #ccc; }
+        body.light-mode .nav-btn { background: #fff; border-color: #ccc; color: #1a1a1a; }
+        body.light-mode .pack-card {
+            background: #ffffff;
+            border-color: #ccc;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        body.light-mode .pack-name { color: #333; }
+        body.light-mode .back-link { background: #fff; border-color: #ccc; color: #1a1a1a; }
+
+        /* Dark Blue Mode Styles */
+        body.dark-blue-mode {
+            background-color: #0d1117;
+            color: #e0f7ff;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .main-wrapper {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+        }
+        .mode-container {
+            display: flex;
+            gap: 8px;
+            position: absolute;
+            left: 20px;
+            top: 25px;
+        }
+        /* Icon Colors */
+        .fa-sun { color: #ffae00; }
+        .fa-moon { color: #00d4ff; }
+
+        .mode-btn {
+            background: #333;
+        }
+        .mode-btn {
+            background: #333;
+            border: 1px solid #555;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .header-oval {
+            background-color: #161b22; /* Loko maizina fa tsy manga loatra */
+            border: 1px solid #30363d;
+            border-radius: 15px; /* Tsy "oval" intsony fa mahitsizoro boribory kely */
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+        .logo-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .store-name { font-size: 1.1rem; font-weight: bold; text-transform: uppercase; font-family: 'Orbitron', sans-serif; }
+
+        .search-container { margin: 20px 0; }
+        .search-bar {
+            width: 100%;
+            padding: 15px 25px; /* Natao ngeza kokoa */
+            border-radius: 25px;
+            border: 1px solid #30363d;
+            background: #0d1117;
+            color: white;
+            font-size: 1rem; /* Natao ngeza ny soratra */
+            outline: none;
+            box-shadow: none;
+        }
+
+        /* Bokotra kely telo ho an'ny sokajy */
+        .category-nav {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .nav-btn {
+            background: #333;
+            border: 1px solid #555;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+        .nav-btn:hover {
+            background: #00d4ff;
+            border-color: #00d4ff;
+            color: #1a1a1a;
+        }
+        .nav-btn.active {
+            background: #00d4ff;
+            border-color: #00d4ff;
+            color: #1a1a1a;
+        }
+
+        .category-title {
+            text-align: left;
+            margin: 30px 0 15px;
+            color: #00d4ff;
+            font-size: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-left: 4px solid #00d4ff;
+            padding-left: 10px;
+        }
+
+        .pack-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2 columns like index.html */
+            gap: 20px;
+            margin: 20px auto;
+            max-width: 360px;
+            justify-items: center;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .pack-card {
+            background: #161b22;
+            border-radius: 15px;
+            padding: 15px;
+            border: 1px solid #30363d;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            width: 140px;
+            box-sizing: border-box;
+        }
+        .pack-card:hover { 
+            transform: translateY(-5px) scale(1.05); 
+            box-shadow: 0 0 25px rgba(0, 212, 255, 0.6);
+        }
+        .pack-card:active { transform: scale(0.95); }
+
+        .pack-img { width: 50px; height: 50px; margin-bottom: 10px; border-radius: 10px; object-fit: contain; }
+        .pack-name { color: #fff; font-weight: bold; font-size: 0.9rem; margin-top: 5px; }
+        .pack-price { color: #00ff88; font-weight: bold; font-size: 1rem; margin-top: 5px; text-shadow: 0 0 10px rgba(0, 255, 136, 0.3); }
+        .pack-divider { width: 40px; height: 2px; background: rgba(0, 212, 255, 0.3); margin-top: 8px; border-radius: 2px; }
+        .cart-icon { margin-top: 12px; font-size: 1rem; color: #00d4ff; opacity: 0.8; }
+
+        .back-link {
+            background: #2a2a2a;
+            border: 1px solid #444;
+            padding: 8px 15px;
+            border-radius: 20px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            margin-top: 15px; /* Nampiana elanelana */
+            margin-bottom: 15px;
+            width: fit-content;
+            cursor: pointer;
+        }
+
+        /* Historique Styles (copied from index) */
+        .history-btn {
+            position: absolute; top: 15px; right: 15px;
+            background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 35px; height: 35px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.3s; font-size: 16px; color: white;
+            backdrop-filter: blur(5px); z-index: 100;
+        }
+        .history-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6); z-index: 1000; backdrop-filter: blur(8px);
+        }
+        .history-window {
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 90%; max-width: 400px; background: #001a3d; border: 2px solid #00d4ff;
+            border-radius: 20px; padding: 20px; z-index: 1001; max-height: 70vh; overflow-y: auto;
+        }
+        .order-card-mini { background: rgba(255, 255, 255, 0.03); padding: 15px; border-radius: 12px; margin-bottom: 12px; text-align: left; border: 1px solid rgba(0, 212, 255, 0.3); }
+        .status-termine { color: #00ff88; font-weight: bold; font-size: 0.75rem; }
+        .status-attente { color: #ffcc00; font-weight: bold; font-size: 0.75rem; }
+        .status-rejete { color: #ff4444; font-weight: bold; font-size: 0.75rem; }
+        .btn-clear { width: 100%; background: #ff4444; color: white; border: none; padding: 8px; border-radius: 10px; margin-bottom: 15px; cursor: pointer; }
+
+        /* Reveal Animation */
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        .order-modal {
+            background: #252525;
+            width: 90%;
+            max-width: 450px;
+            margin: 50px auto;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: left;
+            border: 2px solid #00d4ff;
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.5);
+        }
+        .modal-header { font-size: 1.2rem; font-weight: bold; margin-bottom: 20px; color: #00d4ff; border-bottom: 1px solid rgba(0, 212, 255, 0.2); padding-bottom: 10px; font-family: 'Orbitron', sans-serif; }
+        .qty-control { display: flex; align-items: center; gap: 15px; margin: 20px 0; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 12px; }
+        .qty-btn { width: 30px; height: 30px; border-radius: 50%; border: 1px solid #555; background: #333; color: white; cursor: pointer; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-size: 0.75rem; color: #00d4ff; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+        .form-input { 
+            width: 100%;
+            padding: 12px; 
+            border-radius: 10px; 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            background: rgba(0, 0, 0, 0.3); 
+            color: white; 
+            box-sizing: border-box; 
+            outline: none;
+            transition: 0.3s;
+        }
+        .form-input:focus { border-color: #00d4ff; box-shadow: 0 0 15px rgba(0, 212, 255, 0.3); background: rgba(0, 212, 255, 0.05); }
+
+        .payment-section {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 20px;
+            border: 1px dashed rgba(255, 102, 0, 0.4);
+        }
+        .copy-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 102, 0, 0.1);
+            border: 1px solid #ff6600;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: monospace;
+            margin-top: 8px;
+            transition: 0.3s;
+        }
+        .copy-box:hover {
+            background: rgba(255, 102, 0, 0.2);
+            box-shadow: 0 0 10px rgba(255, 102, 0, 0.3);
+        }
+        
+        .confirm-btn {
+            width: 100%;
+            background: #00ff88;
+            color: #000;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        .close-modal { float: right; cursor: pointer; color: #888; }
+    </style>
+</head>
+<body>
+    <div class="main-wrapper">
+        <div onclick="navigateTo('index.html')" class="back-link reveal" style="margin-top: 0;"><i class="fa-solid fa-arrow-left"></i> Hiverina</div>
+
+        <div class="header-oval reveal">
+            <img src="logo.jpg" alt="Logo" class="logo-img">
+            <span class="store-name">Top Up & Packs</span>
+            <img src="free.png" alt="Free Fire" class="logo-img">
+        </div>
+
+        <div class="search-container reveal">
+            <input type="text" class="search-bar" id="searchInput" onkeyup="filterPacks()" placeholder="Tadiavo ny pack...">
+        </div>
+
+        <!-- Bokotra fidirana haingana -->
+        <div class="category-nav reveal">
+            <button class="nav-btn active" onclick="showCategory('top-up', this)">Top Up</button>
+            <button class="nav-btn" onclick="showCategory('abonnement', this)">Abonnement</button>
+            <button class="nav-btn" onclick="showCategory('level-up', this)">Level Up</button>
+        </div>
+
+        <div id="level-up" class="tab-content reveal">
+            <div class="category-title">Level Up</div>
+            <div class="pack-grid">
+                <div class="pack-card" data-name="levelup 0.29" data-price="3000" onclick="openOrder('Levelup 0.29 x1', 3000)">
+                    <img src="dia.png" class="pack-img">
+                    <div class="pack-name">Levelup 0.29 x1</div>
+                    <div class="pack-divider"></div>
+                    <div class="pack-price">3.000Ar</div>
+                    <div class="cart-icon"><i class="fa-solid fa-cart-plus"></i></div>
+                </div>
+                <div class="pack-card" data-name="levelup 0.50 niv10" data-price="4000" onclick="openOrder('Levelup 0.50 Niv 10', 4000)">
+                    <img src="dia.png" class="pack-img">
+                    <div class="pack-name">Levelup 0.50 Niv 10</div>
+                    <div class="pack-divider"></div>
+                    <div class="pack-price">4.000Ar</div>
+                    <div class="cart-icon"><i class="fa-solid fa-cart-plus"></i></div>
+                </div>
+                <div class="pack-card" data-name="levelup 0.50 niv15" data-price="4000" onclick="openOrder('Levelup 0.50 Niv 15', 4000)">
+                    <img src="dia.png" class="pack-img">
+                    <div class="pack-name">Levelup 0.50 Niv 15</div>
+                    <div class="pack-divider"></div>
+                    <div class="pack-price">4.000Ar</div>
+                    <div class="cart-icon"><i class="fa-solid fa-cart-plus"></i></div>
+                </div>
+                <div class="pack-card" data-name="levelup 0.50 niv20" data-price="4000" onclick="openOrder('Levelup 0.50 Niv 20', 4000)">
+                    <img src="dia.png" class="pack-img">
+                    <div class="pack-name">Levelup 0.50 Niv 20</div>
+                    <div class="pack-divider"></div>
+                    <div class="pack-price">4.000Ar</div>
+                    <div class="cart-icon"><i class="fa-solid fa-cart-plus"></i></div>
+                </div>
+                <div class="pack-card" data-name="levelup 0.50 niv25" data-price="4000" onclick="openOrder('Levelup 0.50 Niv 25', 4000)">
+                    <img src="dia.png" class="pack-img">
+                    <div class="pack-name">Levelup 0.50 Niv 25</div>
+                    <div class="pack-divider"></div>
+                    <div class="pack-price">4.000Ar</div>
+                    <div class="cart-icon"><i class="fa-solid fa-cart-plus"></i></div>
+                </div>
+                <div class="pack-card" data-name="levelup 0.79" data-price="5000" onclick="openOrder('Levelup 0.79 x1', 5000)">
+                    <img src="dia.png" class="pack-img">
+                    <div class="pack-name">Levelup 0.79 x1</div>
+                    <div class="pack-divider"></div>
+                    <div class="pack-price">5.000Ar</div>
+                    <div class="cart-icon"><i class="fa-solid fa-cart-plus"></i></div>
+                </div>
+                <div class="pack-card" data-name="levelup totalite totality" data-price="24500" onclick="openOrder('Levelup Totalité', 24500)">
+                    <img src="dia.png" class="pack-img">
+                    <div class="pack-name">Levelup Totalité</div>
+                    <div class="pack-divider"></div>
+                    <div class="pack-price">24.500Ar</div>
+                    <div class="cart-icon"><i class="fa-solid fa-cart-plus"></i></div>
+                </div>
+            </div>
+        </div>
+        <div id="abonnement" class="tab-content reveal">
+            <div class="category-title">Abonnement (UID)</div>
+            <div class="pack-grid">
+                <div class="pack-card" data-name="weekly weekly uid" data-price="11000" onclick="openOrder('Weekly UID', 11000)">
+                    <img src="we.png" class="pack-img">
+                    <div class="pack-name">Weekly par UID</div>
+                    <div class="pack-divider"></div>
+                    <div class="pack-price">11.000Ar</div>
+                    <div class="cart-icon"><i class="fa-solid fa-cart-plus"></i></div>
+                </div>
+                <div class="pack-card" data-name="monthly monthly uid" data-price="49000" onclick="openOrder('Monthly UID', 49000)">
+                    <img src="mo.png" class="pack-img">
+                    <div class="pack-name">Monthly par UID</div>
+                    <div class="pack-divider"></div>
+                    <div class="pack-price">49.000Ar</div>
+                    <div class="cart-icon"><i class="fa-solid fa-cart-plus"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="top-up" class="tab-content reveal" style="display: block;">
+            <div class="category-title">Top Up (par id)</div>
+            <div class="pack-grid">
+                <div class="pack-card" data-name="100 diamonds 100d" data-price="5200" onclick="openOrder('100 Diamonds', 5200)">
+                    <img src="dia.png" class="pack-img">
+                    <div class="pack-name">110D</div>
+                    <div class="pack-divider"></div>
+                    <div class="pack-price">5.200Ar</div>
+                    <div class="cart-icon"><i class="fa-solid fa-cart-plus"></i></div>
+                </div>
+                <div class="pack-card" data-name="310 diamonds 310d" data-price="14000" onclick="openOrder('310 Diamonds', 14000)">
+                    <img src="dia.png" class="pack-img">
+                    <div class="pack-name">310D</div>
+                    <div class="pack-divider"></div>
+                    <div class="pack-price">14.000Ar</div>
+                    <div class="cart-icon"><i class="fa-solid fa-cart-plus"></i></div>
+                </div>
+                <div class="pack-card" data-name="520 diamonds 520d" data-price="24000" onclick="openOrder('520 Diamonds', 24000)">
+                    <img src="dia.png" class="pack-img">
+                    <div class="pack-name">520D</div>
+                    <div class="pack-divider"></div>
+                    <div class="pack-price">24.000Ar</div>
+                    <div class="cart-icon"><i class="fa-solid fa-cart-plus"></i></div>
+                </div>
+                <div class="pack-card" data-name="1060 diamonds 1060d" data-price="44500" onclick="openOrder('1060 Diamonds', 44500)">
+                    <img src="dia.png" class="pack-img">
+                    <div class="pack-name">1.060D</div>
+                    <div class="pack-divider"></div>
+                    <div class="pack-price">44.500Ar</div>
+                    <div class="cart-icon"><i class="fa-solid fa-cart-plus"></i></div>
+                </div>
+                <div class="pack-card" data-name="2180 diamonds 2180d" data-price="89000" onclick="openOrder('2180 Diamonds', 89000)">
+                    <img src="dia.png" class="pack-img">
+                    <div class="pack-name">2.180D</div>
+                    <div class="pack-divider"></div>
+                    <div class="pack-price">89.000Ar</div>
+                    <div class="cart-icon"><i class="fa-solid fa-cart-plus"></i></div>
+                </div>
+                <div class="pack-card" data-name="5600 diamonds 5600d" data-price="225000" onclick="openOrder('5600 Diamonds', 225000)">
+                    <img src="dia.png" class="pack-img">
+                    <div class="pack-name">5.600D</div>
+                    <div class="pack-divider"></div>
+                    <div class="pack-price">225.000Ar</div>
+                    <div class="cart-icon"><i class="fa-solid fa-cart-plus"></i></div>
+                </div>
+            </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Modal -->
+    <div id="orderOverlay" class="modal-overlay">
+        <div class="order-modal">
+            <span class="close-modal" onclick="closeOrder()"><i class="fa-solid fa-circle-xmark"></i></span>
+            <div class="modal-header" id="modalPackName">Fanamarihana Order</div>
+            
+            <div class="qty-control">
+                <button class="qty-btn" onclick="updateQty(-1)">-</button>
+                <span id="orderQty" style="font-weight: bold;">1</span>
+                <button class="qty-btn" onclick="updateQty(1)">+</button>
+                <span id="orderTotal" style="margin-left: auto; color: #00ff88; font-weight: bold;">0 Ar</span>
+            </div>
+
+            <div class="form-group">
+                <label>Player ID (UID)</label>
+                <input type="text" id="userUid" class="form-input" placeholder="Ampidiro ny ID">
+            </div>
+            <div class="form-group">
+                <label>Pseudo sur Free fire</label>
+                <input type="text" id="userPseudo" class="form-input" placeholder="Ampidiro ny Pseudo">
+            </div>
+            <div class="form-group">
+                <label>votre Numero téléphone </label>
+                <input type="text" id="userPhone" class="form-input" placeholder="03X XX XXX XX">
+            </div>
+
+            <div class="payment-section">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                    <img src="orange.png" alt="Orange Money" style="width: 40px; height: 40px; border-radius: 8px;">
+                    <div style="font-size: 0.8rem; font-weight: bold;">Mode de Paiement: Orange Money</div>
+                </div>
+                <div style="font-size: 0.75rem; color: #fff; margin-bottom: 5px;">Tompon'ny kaonty: <strong>RAHARIVOLOLOMIHANTA Fanja</strong></div>
+                <div style="font-size: 0.7rem; color: #aaa;">Alefaso amin'ity laharana ity ny vola:</div>
+                <div class="copy-box" onclick="copyNumber('0322223128')">
+                    <span style="color: #fff; font-weight: bold; font-size: 1rem;">032 22 231 28</span>
+                    <span style="font-size: 0.7rem; color: #ff6600; font-weight: bold;">COPIER</span>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 15px;">
+                <label>ID Transaction (Orange Money)</label>
+                <input type="text" id="transId" class="form-input" placeholder="Ampidiro ny ID Transaction">
+            </div>
+
+            <button class="confirm-btn" onclick="confirmOrder()">Hanamarina ny Order</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { supabase } from './supabaseClient.js'
+
+        let currentPack = { name: '', price: 0, qty: 1 };
+
+        window.onload = function() {
+            document.getElementById('userUid').value = localStorage.getItem('userUid') || '';
+            document.getElementById('userPseudo').value = localStorage.getItem('userPseudo') || '';
+            document.getElementById('userPhone').value = localStorage.getItem('userPhone') || '';
+            
+            // Listeners mba hitazona ny zavatra nosoratany raha mbola tsy vita
+            document.getElementById('userUid').addEventListener('input', (e) => localStorage.setItem('userUid', e.target.value));
+            document.getElementById('userPseudo').addEventListener('input', (e) => localStorage.setItem('userPseudo', e.target.value));
+            document.getElementById('userPhone').addEventListener('input', (e) => localStorage.setItem('userPhone', e.target.value));
+            
+            // Manokatra ho azy ny modal raha misy draft tavela
+            const draft = localStorage.getItem('draftOrder');
+            if (draft) {
+                const d = JSON.parse(draft);
+                // Ampiasaina ny timeout kely mba hadio ny fanokafana modal
+                setTimeout(() => {
+                    openOrder(d.name, d.price, d.qty);
+                }, 300);
+            }
+        };
+
+        // Common function for updating admin status UI
+        function updateAdminUI(isOnline) {
+            const display = document.getElementById('adminStatusDisplay');
+            if (display) {
+                display.innerText = isOnline ? "En ligne" : "Hors ligne";
+                display.className = isOnline ? "status-online" : "status-offline";
+            }
+        }
+
+        // Function to fetch initial admin status
+        async function fetchAdminStatus() {
+            const { data } = await supabase.from('admin').select('online').eq('id', 'status').single();
+            updateAdminUI(data?.online);
+        }
+        fetchAdminStatus();
+
+        // Realtime listener for Admin Status
+        supabase.channel('admin_changes')
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'admin', filter: 'id=eq.status' },
+            payload => updateAdminUI(payload.new.online))
+            .subscribe();
+
+        // Reveal Observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, { threshold: 0.1 });
+        window.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        });
+
+        window.openOrder = function(name, price, qty = 1) {
+            currentPack = { name, price, qty: qty };
+            document.getElementById('modalPackName').innerText = name;
+            document.getElementById('orderQty').innerText = qty;
+            updateTotalDisplay();
+            
+            // Tehirizina ho draft
+            localStorage.setItem('draftOrder', JSON.stringify(currentPack));
+            
+            document.getElementById('orderOverlay').style.display = 'block';
+        }
+
+        window.closeOrder = function() {
+            document.getElementById('orderOverlay').style.display = 'none';
+        }
+
+        window.updateQty = function(val) {
+            currentPack.qty = Math.max(1, currentPack.qty + val);
+            document.getElementById('orderQty').innerText = currentPack.qty;
+            updateTotalDisplay();
+            
+            // Havaozina ny draft isaky ny miova ny quantité
+            localStorage.setItem('draftOrder', JSON.stringify(currentPack));
+        }
+
+        function updateTotalDisplay() {
+            const total = currentPack.price * currentPack.qty;
+            document.getElementById('orderTotal').innerText = total.toLocaleString() + ' Ar';
+        }
+
+        window.copyNumber = function(num) {
+            navigator.clipboard.writeText(num);
+            alert("Laharana voadikan'ny clipboard: " + num);
+        }
+
+        window.confirmOrder = async function() {
+            const uid = document.getElementById('userUid').value;
+            const pseudo = document.getElementById('userPseudo').value;
+            const phone = document.getElementById('userPhone').value;
+            const tid = document.getElementById('transId').value;
+
+            if(!uid || !tid) { alert("Fenoy ny UID sy ny ID Transaction"); return; }
+
+            const total = currentPack.price * currentPack.qty;
+
+            try {
+                const { error } = await supabase.from('orders').insert([{
+                    uid: uid,
+                    pseudo: pseudo,
+                    phone: phone,
+                    tid: tid,
+                    pack: currentPack.name,
+                    qty: currentPack.qty,
+                    total: total,
+                    status: "En attente"
+                }]);
+
+                if (error) throw error;
+
+                // Tazonina ny UID fa fafana ny hafa mba hiverina vaovao ny form
+                localStorage.setItem('userUid', uid); // Keep userUid in localStorage
+                localStorage.removeItem('userPseudo');
+                localStorage.removeItem('userPhone');
+                
+                // Fafana ny draft satria efa lasa ny commande
+                localStorage.removeItem('draftOrder');
+
+                // Hadioina ny sakan'ny soratra (inputs)
+                document.getElementById('userUid').value = '';
+                document.getElementById('userPseudo').value = '';
+                document.getElementById('userPhone').value = '';
+                document.getElementById('transId').value = '';
+
+                // Averina ho 1 ny quantité ho an'ny commande manaraka
+                currentPack.qty = 1;
+
+                // Mandefa any amin'ny merci.html miaraka amin'ny antsipiriany
+                window.location.href = `merci.html?tid=${tid}&pack=${currentPack.name}&total=${total}&uid=${uid}&pseudo=${pseudo}&phone=${phone}`;
+            } catch (e) {
+                console.error("Error: ", e);
+                alert("Nisy olana kely tamin'ny fandefasana ny baiko.");
+            }
+        }
+
+        window.showCategory = function(categoryId, btn) {
+            // Tehirizo ny mode ankehitriny
+            const currentMode = document.body.classList.contains('light-mode') ? 'light' : 'dark-blue';
+
+            // Esory daholo ny class 'active' amin'ny bokotra rehetra
+            let buttons = document.getElementsByClassName('nav-btn');
+            for (let button of buttons) {
+                button.classList.remove('active');
+            }
+
+            // Asehoy ilay tab voafidy ary asio class 'active' ny bokotra
+            // Afenina daholo ny tab rehetra
+            let contents = document.getElementsByClassName('tab-content');
+            for (let content of contents) {
+                content.style.display = "none";
+            }
+
+            // Esory ny class 'active' amin'ny bokotra rehetra
+            document.getElementById(categoryId).style.display = "block";
+            btn.classList.add('active');
+        }
+
+        window.filterPacks = function() {
+            let input = document.getElementById('searchInput').value.toLowerCase();
+            let cards = document.getElementsByClassName('pack-card');
+            for (let i = 0; i < cards.length; i++) {
+                let name = cards[i].getAttribute('data-name');
+                cards[i].style.display = name.includes(input) ? "" : "none";
+            }
+        }
+    </script>
+
+    <script>
+        // Navigation function JS
+        function navigateTo(url) {
+            window.location.href = url;
+        }
+
+        // Mode Management (Global)
+        function setMode(mode) {
+            document.body.classList.remove('light-mode', 'dark-blue-mode');
+            if (mode === 'light') {
+                document.body.classList.add('light-mode');
+            } else if (mode === 'dark-blue') {
+                document.body.classList.add('dark-blue-mode');
+            }
+            localStorage.setItem('theme', mode);
+        }
+
+        // Sync theme across tabs
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'theme') setMode(e.newValue);
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'dark-blue';
+            setMode(savedTheme);
+        });
+    </script>
+</body>
+</html>
