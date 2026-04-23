@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booyah Store - Admin</title>
+    <!-- Google Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { 
+            font-family: 'Rajdhani', sans-serif; 
+            background: #000b1e; /* Loko manga tsy miova amin'ny Dark Blue mode */
+            animation: fadeIn 0.8s ease-out; /* Animation rehefa misokatra ny pejy */
+            color: white; padding: 20px; text-align: center;
+            min-height: 100vh;
+            transition: all 0.3s; /* Transition ho an'ny mode */
+        }
+        /* Light Mode Styles */
+        body.light-mode {
+            background-color: #e0e7eb; /* Manga maivana kokoa */
+            color: #1a1a1a;
+        }
+        body.light-mode .header { color: #0056b3; }
+        body.light-mode .admin-controls { background: #ffffff; border-color: #ccc; }
+        body.light-mode .search-bar { background: #f0f0f0; border-color: #ccc; color: #1a1a1a; }
+        body.light-mode .filter-btn { background: #e0e7eb; border-color: #ccc; color: #1a1a1a; }
+        body.light-mode .filter-btn.active { background: #0056b3; border-color: #0056b3; color: white; }
+        body.light-mode .order-card { background: #ffffff; border-color: #ccc; box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); }
+        body.light-mode .order-card:hover { border-color: #0056b3; box-shadow: 0 0 15px rgba(0, 86, 179, 0.3); }
+        body.light-mode .card-header { border-color: #eee; }
+        body.light-mode .pack-tag { color: #0056b3; }
+        body.light-mode .info-label { color: #888; }
+        body.light-mode .info-value { color: #333; }
+        body.light-mode .tid-box { background: #f0f0f0; border-color: #008000; }
+        body.light-mode .tid-box span:last-child { color: #008000; }
+        body.light-mode .btn-done { background: #008000; color: white; }
+        body.light-mode .btn-done:disabled { background: #ccc; color: #888; border-color: #aaa; }
+        body.light-mode .status-toggle-container { background: #ffffff; border-color: #ccc; }
+        body.light-mode .slider { background-color: #ccc; }
+        body.light-mode input:checked + .slider { background-color: #008000; box-shadow: 0 0 10px rgba(0, 128, 0, 0.5); }
+        body.light-mode #adminStatusText { color: #008000; }
+        body.light-mode .mode-btn { background: #e0e7eb; border-color: #ccc; color: #1a1a1a; }
+
+        /* Dark Blue Mode Styles (default) */
+        body.dark-blue-mode {
+            background-color: #000b1e;
+            color: #e0f7ff;
+        }
+        body.dark-blue-mode .header { color: #00d4ff; }
+        body.dark-blue-mode .admin-controls { background: rgba(42, 42, 42, 0.9); border-color: #444; }
+        body.dark-blue-mode .search-bar { background: rgba(42, 42, 42, 0.8); border-color: #444; color: white; }
+        body.dark-blue-mode .filter-btn { background: #333; border-color: #555; color: white; }
+        body.dark-blue-mode .filter-btn.active { background: #00d4ff; border-color: #00d4ff; color: #1a1a1a; }
+        body.dark-blue-mode .order-card { background: rgba(42, 42, 42, 0.9); border-color: #444; }
+        body.dark-blue-mode .mode-btn { background: #333; border-color: #555; color: white; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .container { max-width: 600px; margin: 0 auto; position: relative; }
+        .header { font-family: 'Orbitron', sans-serif; color: #00d4ff; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
+        
+        .mode-container {
+            display: flex;
+            gap: 8px;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        /* Icon Colors */
+        .fa-sun { color: #ffae00; }
+        .fa-moon { color: #00d4ff; }
+
+        .mode-btn {
+            background: #333;
+        }
+        .mode-btn {
+            background: #333;
+            border: 1px solid #555;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        /* Search & Filters */
+        .admin-controls { margin-bottom: 30px; display: flex; flex-direction: column; gap: 15px; }
+        .search-bar {
+            width: 100%; padding: 12px 20px; border-radius: 25px; border: 1px solid #444;
+            background: rgba(42, 42, 42, 0.8); color: white; outline: none; box-sizing: border-box;
+        }
+        .filter-group { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        .filter-btn {
+            background: #333; border: 1px solid #555; color: white; padding: 8px 15px;
+            border-radius: 20px; cursor: pointer; transition: 0.3s; font-size: 0.8rem;
+        }
+        .filter-btn.active { background: #00d4ff; border-color: #00d4ff; color: #1a1a1a; font-weight: bold; }
+
+        /* Order Cards */o code de
+        .order-card { 
+            background: rgba(0, 26, 61, 0.9); border: 1px solid #00d4ff; border-radius: 15px; 
+            padding: 20px; margin-bottom: 20px; text-align: left; position: relative;
+            transition: 0.3s; box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+        }
+        .order-card:hover { border-color: #00d4ff; box-shadow: 0 0 15px rgba(0, 212, 255, 0.3); }
+        
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .pack-tag { color: #00d4ff; font-weight: bold; font-size: 1.1rem; }
+        .status-badge { padding: 4px 10px; border-radius: 5px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
+        .status-attente { background: rgba(255, 204, 0, 0.1); color: #ffcc00; border: 1px solid #ffcc00; } /* Mavo */
+        .status-termine { background: rgba(0, 255, 136, 0.1); color: #00ff88; border: 1px solid #00ff88; } /* Maintsy */
+
+        .order-info { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.9rem; }
+        .info-label { color: #888; display: block; font-size: 0.75rem; }
+        .info-value { color: #eee; font-weight: 500; }
+
+        .tid-box { background: #1a1a1a; padding: 10px; border-radius: 8px; margin-top: 15px; font-family: monospace; border-left: 3px solid #00ff88; }
+
+        .btn-done { 
+            background: #00ff88; color: black; border: none; padding: 12px; 
+            border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; 
+            margin-top: 15px; transition: 0.3s; font-family: 'Orbitron', sans-serif;
+        }
+        .btn-done:hover { background: #00cc6e; transform: scale(1.02); }
+        .btn-done:disabled { background: #444; color: #888; cursor: not-allowed; }
+
+        /* Status Toggle Style */
+        .status-toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 15px;
+            border: 1px solid rgba(0, 212, 255, 0.4);
+        }
+        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #444; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #00ff88; box-shadow: 0 0 10px #00ff88; }
+        input:checked + .slider:before { transform: translateX(24px); }
+        #adminStatusText { font-weight: bold; min-width: 80px; }
+
+        .empty-state { padding: 50px; color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div style="display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 25px;">
+            <div class="mode-container">
+                <button class="mode-btn" onclick="setMode('light')"><i class="fa-solid fa-sun"></i></button>
+                <button class="mode-btn" onclick="setMode('dark-blue')"><i class="fa-solid fa-moon"></i></button>
+            </div>
+            <h1 class="header" style="margin: 0;"><i class="fa-solid fa-screwdriver-wrench"></i> Commandes Reçues</h1>
+        </div>
+        
+        <div class="status-toggle-container">
+            <span style="font-size: 0.9rem; color: #aaa;">Status Admin:</span>
+            <label class="switch">
+                <input type="checkbox" id="adminStatusToggle" onclick="toggleAdminStatus()">
+                <span class="slider"></span>
+            </label>
+            <span id="adminStatusText">...</span>
+        </div>
+
+        <div class="admin-controls">
+            <input type="text" class="search-bar" id="adminSearch" onkeyup="filterOrders()" placeholder="Rechercher par UID ou Transaction ID...">
+            <div class="filter-group">
+                <button class="filter-btn active" onclick="setFilter('all', this)">Tout</button>
+                <button class="filter-btn" onclick="setFilter('En attente', this)">En attente</button>
+                <button class="filter-btn" onclick="setFilter('Terminé', this)">Terminé</button>
+            </div>
+        </div>
+
+        <div id="ordersList"><i class="fa-solid fa-spinner fa-spin"></i> Chargement des commandes...</div>
+    </div>
+
+    <script>
+        // Mode Management (mitovy amin'ny index.html)
+        function setMode(mode) {
+            document.body.classList.remove('light-mode', 'dark-blue-mode');
+            if (mode === 'light') {
+                document.body.classList.add('light-mode');
+            } else if (mode === 'dark-blue') {
+                document.body.classList.add('dark-blue-mode');
+            }
+            localStorage.setItem('theme', mode);
+        }
+
+        // Sync theme across tabs
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'theme') setMode(e.newValue);
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'dark-blue';
+            setMode(savedTheme);
+        });
+    </script>
+    <script type="module">
+        import { supabase } from './supabaseClient.js'
+
+        let allOrders = [];
+        let currentFilter = 'all';
+
+        async function fetchAdminStatus() {
+            const { data } = await supabase.from('admin').select('online').eq('id', 'status').single();
+            if (data) updateAdminUI(data.online);
+        }
+
+        function updateAdminUI(isOnline) {
+            const text = document.getElementById('adminStatusText');
+            const checkbox = document.getElementById('adminStatusToggle');
+            checkbox.checked = isOnline;
+            text.innerText = isOnline ? 'En ligne' : 'Hors ligne';
+            text.style.color = isOnline ? '#00ff88' : '#ff4444';
+        }
+        fetchAdminStatus();
+
+        window.toggleAdminStatus = async () => {
+            const checkbox = document.getElementById('adminStatusToggle');
+            await supabase.from('admin').update({ online: checkbox.checked }).eq('id', 'status');
+        };
+
+        async function loadOrders() {
+            const { data, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false });
+            if (data) {
+                allOrders = data;
+                renderOrders();
+            }
+        }
+        loadOrders();
+
+        // Simple polling or realtime for orders
+        supabase.channel('orders_sync').on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, loadOrders).subscribe();
+
+        window.renderOrders = () => {
+            const list = document.getElementById('ordersList');
+            const searchTerm = document.getElementById('adminSearch').value.toLowerCase();
+            
+            const filtered = allOrders.filter(o => {
+                const matchesFilter = currentFilter === 'all' || o.status === currentFilter;
+                const matchesSearch = o.uid.toLowerCase().includes(searchTerm) || o.tid.toLowerCase().includes(searchTerm);
+                return matchesFilter && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                list.innerHTML = '<div class="empty-state">Aucune commande trouvée.</div>';
+                return;
+            }
+
+            list.innerHTML = filtered.map(order => `
+                <div class="order-card">
+                    <div class="card-header">
+                        <div>
+                            <div class="pack-tag">${order.pack} <span style="font-size:0.8rem; color:#888">x${order.qty}</span></div>
+                            <div style="font-size:0.7rem; color:#888; margin-top:3px">
+                                <i class="fa-solid fa-calendar-day"></i> ${new Date(order.created_at).toLocaleString('fr-FR')}
+                            </div>
+                        </div>
+                        <span class="status-badge ${order.status === 'Terminé' ? 'status-termine' : (order.status === 'Rejeté' ? 'status-rejete' : 'status-attente')}">${order.status}</span>
+                    </div>
+                    <div style="font-size: 0.7rem; color: #666; margin-bottom: 10px;">
+                        Order ID: <span style="color: #aaa;">${order.id}</span>
+                    </div>
+                    <div class="order-info">
+                        <div><span class="info-label">Player ID (UID)</span><span class="info-value">${order.uid}</span></div>
+                        <div><span class="info-label">Pseudo</span><span class="info-value">${order.pseudo || 'N/A'}</span></div>
+                        <div><span class="info-label">Numéro</span><span class="info-value">${order.phone}</span></div>
+                        <div><span class="info-label">Total</span><span class="info-value" style="color:#00ff88">${order.total.toLocaleString()} Ar</span></div>
+                    </div>
+                    <div class="tid-box">
+                        <span class="info-label">Transaction ID (Orange Money)</span>
+                        <span style="color:#00ff88; font-weight:bold;">${order.tid}</span>
+                    </div>
+                    <div class="admin-actions">
+                        <button class="action-btn btn-valide" onclick="updateStatus('${order.id}', 'Terminé')">TERMINÉ</button>
+                        <button class="action-btn btn-rejete" onclick="updateStatus('${order.id}', 'Rejeté')">REJETER</button>
+                        <button class="action-btn btn-attente" onclick="updateStatus('${order.id}', 'En attente')">ATTENTE</button>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        window.updateStatus = async (id, newStatus) => {
+            await supabase.from('orders').update({ status: newStatus }).eq('id', id);
+        };
+
+        window.setFilter = (filter, btn) => {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderOrders();
+        };
+
+        window.filterOrders = () => renderOrders();
+    </script>
+</body>
+</html>
