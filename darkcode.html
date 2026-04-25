@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        html { background: #000b1e; }
         body { 
             font-family: 'Rajdhani', sans-serif; 
             background: #000b1e; /* Loko manga tsy miova amin'ny Dark Blue mode */
@@ -58,6 +59,14 @@
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+        /* Animation rehefa hivoaka ny pejy */
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-10px); }
+        }
+        .fade-out {
+            animation: fadeOut 0.3s ease-in forwards;
         }
 
         .container { max-width: 600px; margin: 0 auto; position: relative; }
@@ -111,22 +120,52 @@
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
         .pack-tag { color: #00d4ff; font-weight: bold; font-size: 1.1rem; }
         .status-badge { padding: 4px 10px; border-radius: 5px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
-        .status-attente { background: rgba(255, 204, 0, 0.1); color: #ffcc00; border: 1px solid #ffcc00; } /* Mavo */
-        .status-termine { background: rgba(0, 255, 136, 0.1); color: #00ff88; border: 1px solid #00ff88; } /* Maintsy */
+        
+        /* Status Styles miaraka amin'ny Glow */
+        .status-attente { background: rgba(255, 204, 0, 0.1); color: #ffcc00; border: 1px solid #ffcc00; box-shadow: 0 0 10px rgba(255, 204, 0, 0.2); }
+        .status-termine { background: rgba(0, 255, 136, 0.1); color: #00ff88; border: 1px solid #00ff88; box-shadow: 0 0 10px rgba(0, 255, 136, 0.2); }
+        .status-rejete { background: rgba(255, 68, 68, 0.1); color: #ff4444; border: 1px solid #ff4444; box-shadow: 0 0 10px rgba(255, 68, 68, 0.2); }
 
         .order-info { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.9rem; }
         .info-label { color: #888; display: block; font-size: 0.75rem; }
         .info-value { color: #eee; font-weight: 500; }
 
-        .tid-box { background: #1a1a1a; padding: 10px; border-radius: 8px; margin-top: 15px; font-family: monospace; border-left: 3px solid #00ff88; }
+        .tid-box { background: rgba(0, 0, 0, 0.3); padding: 10px; border-radius: 8px; margin-top: 15px; font-family: monospace; border: 1px solid rgba(255, 255, 255, 0.05); }
 
-        .btn-done { 
-            background: #00ff88; color: black; border: none; padding: 12px; 
-            border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; 
-            margin-top: 15px; transition: 0.3s; font-family: 'Orbitron', sans-serif;
+        /* Cage mlay ho an'ny bokotra Admin */
+        .admin-actions {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px dashed rgba(0, 212, 255, 0.3);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: space-between;
         }
-        .btn-done:hover { background: #00cc6e; transform: scale(1.02); }
-        .btn-done:disabled { background: #444; color: #888; cursor: not-allowed; }
+        
+        .action-btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+        .action-btn:active { transform: scale(0.95); }
+
+        .btn-valide { background: #00ff88; color: #000; }
+        .btn-valide:hover { background: #00cc6e; box-shadow: 0 0 15px rgba(0, 255, 136, 0.4); }
+        .btn-rejete { background: #ff4444; color: #fff; }
+        .btn-rejete:hover { background: #cc0000; box-shadow: 0 0 15px rgba(255, 68, 68, 0.4); }
+        .btn-attente { background: #333; color: #ffcc00; border-color: #ffcc00; }
+        .btn-attente:hover { background: #444; box-shadow: 0 0 15px rgba(255, 204, 0, 0.2); }
 
         /* Status Toggle Style */
         .status-toggle-container {
@@ -148,11 +187,69 @@
         input:checked + .slider:before { transform: translateX(24px); }
         #adminStatusText { font-weight: bold; min-width: 80px; }
 
+        .back-link { 
+            color: #888; text-decoration: none; display: block; margin-top: 20px; cursor: pointer; font-size: 0.9rem;
+        }
+        .back-link:hover { color: #00d4ff; }
+
         .empty-state { padding: 50px; color: #666; font-style: italic; }
+
+        /* Modal Styles for Order Details */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 1000;
+            overflow-y: auto;
+            backdrop-filter: blur(5px);
+        }
+        .order-detail-modal {
+            background: #001a3d; /* Dark blue background */
+            width: 90%;
+            max-width: 450px;
+            margin: 50px auto;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: left;
+            border: 2px solid #00d4ff;
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.5);
+            position: relative;
+        }
+        .order-detail-modal .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            color: #888;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .order-detail-modal .close-modal:hover {
+            color: #00d4ff;
+        }
+        .order-detail-modal .modal-header {
+            font-size: 1.2rem; font-weight: bold; margin-bottom: 20px; color: #00d4ff; border-bottom: 1px solid rgba(0, 212, 255, 0.2); padding-bottom: 10px; font-family: 'Orbitron', sans-serif;
+        }
+        .order-detail-modal .summary-item {
+            margin-bottom: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 10px;
+        }
+        .order-detail-modal .summary-item:last-child { border-bottom: none; }
+        .order-detail-modal .summary-label {
+            display: block; font-size: 0.7rem; color: #00d4ff; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .order-detail-modal .summary-value {
+            display: block; font-size: 1rem; color: #fff; font-weight: bold;
+        }
+        /* Specific color for status in modal */
+        .order-detail-modal .status-attente { color: #ffcc00; }
+        .order-detail-modal .status-termine { color: #00ff88; }
+        .order-detail-modal .status-rejete { color: #ff4444; }
     </style>
 </head>
 <body>
     <div class="container">
+        <div onclick="navigateTo('index.html')" class="back-link" style="margin-bottom: 20px; text-align: left; width: fit-content;"><i class="fa-solid fa-arrow-left"></i> Retour à l'accueil</div>
         <div style="display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 25px;">
             <div class="mode-container">
                 <button class="mode-btn" onclick="setMode('light')"><i class="fa-solid fa-sun"></i></button>
@@ -182,7 +279,63 @@
         <div id="ordersList"><i class="fa-solid fa-spinner fa-spin"></i> Chargement des commandes...</div>
     </div>
 
+    <!-- Order Detail Modal -->
+    <div id="orderDetailOverlay" class="modal-overlay">
+        <div class="order-detail-modal">
+            <span class="close-modal" onclick="closeOrderDetailModal()"><i class="fa-solid fa-circle-xmark"></i></span>
+            <div class="modal-header">Détails de la Commande</div>
+            
+            <div class="summary-item">
+                <span class="summary-label">Order ID</span>
+                <span class="summary-value" id="modal-order-id">...</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Statut</span>
+                <span class="summary-value" id="modal-order-status">...</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Pack</span>
+                <span class="summary-value" id="modal-order-pack">...</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Quantité</span>
+                <span class="summary-value" id="modal-order-qty">...</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Total</span>
+                <span class="summary-value" id="modal-order-total">...</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Player ID (UID)</span>
+                <span class="summary-value" id="modal-order-uid">...</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Pseudo</span>
+                <span class="summary-value" id="modal-order-pseudo">...</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Numéro de Téléphone</span>
+                <span class="summary-value" id="modal-order-phone">...</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">ID Transaction (Orange Money)</span>
+                <span class="summary-value" id="modal-order-tid">...</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Date de Commande</span>
+                <span class="summary-value" id="modal-order-date">...</span>
+            </div>
+        </div>
+    </div>
     <script>
+        // Navigation function
+        function navigateTo(url) {
+            document.body.classList.add('fade-out');
+            setTimeout(() => {
+                window.location.href = url;
+            }, 300);
+        }
+
         // Mode Management (mitovy amin'ny index.html)
         function setMode(mode) {
             document.body.classList.remove('light-mode', 'dark-blue-mode');
@@ -284,9 +437,38 @@
                         <button class="action-btn btn-valide" onclick="updateStatus('${order.id}', 'Terminé')">TERMINÉ</button>
                         <button class="action-btn btn-rejete" onclick="updateStatus('${order.id}', 'Rejeté')">REJETER</button>
                         <button class="action-btn btn-attente" onclick="updateStatus('${order.id}', 'En attente')">ATTENTE</button>
+                        <button class="action-btn btn-view" onclick="showOrderDetailModal('${order.id}')">VOIR</button>
                     </div>
                 </div>
             `).join('');
+        };
+
+        window.showOrderDetailModal = (orderId) => {
+            const order = allOrders.find(o => o.id === orderId);
+            if (!order) return;
+
+            document.getElementById('modal-order-id').innerText = order.id;
+            document.getElementById('modal-order-pack').innerText = `${order.pack}`;
+            document.getElementById('modal-order-qty').innerText = order.qty;
+            document.getElementById('modal-order-total').innerText = `${order.total.toLocaleString()} Ar`;
+            document.getElementById('modal-order-uid').innerText = order.uid;
+            document.getElementById('modal-order-pseudo').innerText = order.pseudo || 'N/A';
+            document.getElementById('modal-order-phone').innerText = order.phone;
+            document.getElementById('modal-order-tid').innerText = order.tid;
+            document.getElementById('modal-order-date').innerText = new Date(order.created_at).toLocaleString('fr-FR');
+
+            const statusElement = document.getElementById('modal-order-status');
+            statusElement.innerText = order.status;
+            statusElement.className = 'summary-value'; // Reset classes
+            if (order.status === 'Terminé') statusElement.classList.add('status-termine');
+            else if (order.status === 'Rejeté') statusElement.classList.add('status-rejete');
+            else statusElement.classList.add('status-attente');
+
+            document.getElementById('orderDetailOverlay').style.display = 'block';
+        };
+
+        window.closeOrderDetailModal = () => {
+            document.getElementById('orderDetailOverlay').style.display = 'none';
         };
 
         window.updateStatus = async (id, newStatus) => {
