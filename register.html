@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booyah Store - Inscription</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        html { background: #000b1e; }
+        :root {
+            --text-color: #ffffff;
+        }
+        header { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        .logo-square { width: 50px; height: 50px; object-fit: cover; border-radius: 5px; }
+        .separator { width: 4px; height: 30px; background-color: var(--text-color); border-radius: 2px; }
+        .brand { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; display: flex; gap: 5px; }
+        .blue-text { color: #00d4ff; }
+        .yellow-text { color: #ffc107; }
+        body {
+            margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif;
+            background: #000b1e; color: white; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; min-height: 100vh;
+        }
+        .auth-container {
+            width: 90%; max-width: 400px; background: rgba(255, 255, 255, 0.03);
+            padding: 30px; border-radius: 20px; border: 1px solid #00d4ff;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+        }
+        h2 { font-family: 'Orbitron', sans-serif; color: #00d4ff; text-align: center; margin-bottom: 25px; }
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; font-size: 0.8rem; color: #aaa; margin-bottom: 8px; text-transform: uppercase; }
+        .form-input {
+            width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #333;
+            background: rgba(0, 0, 0, 0.3); color: white; box-sizing: border-box; outline: none;
+        }
+        .form-input:focus { border-color: #00d4ff; }
+        .btn-auth {
+            width: 100%; padding: 12px; background: #00d4ff; color: #000; border: none;
+            border-radius: 10px; font-weight: bold; cursor: pointer; font-family: 'Orbitron';
+            transition: 0.3s;
+        }
+        .btn-auth:hover { box-shadow: 0 0 15px #00d4ff; }
+        .switch-auth { margin-top: 20px; font-size: 0.9rem; color: #888; text-align: center; }
+        .switch-auth a { color: #00d4ff; text-decoration: none; font-weight: bold; }
+        .back-home { margin-top: 20px; color: #aaa; text-decoration: none; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <header>
+            <img src="logo.jpg" alt="Logo" class="logo-square">
+            <div class="separator"></div>
+            <div class="brand">
+                <span class="blue-text">BOOYAH</span>
+                <span class="yellow-text">STORE</span>
+            </div>
+        </header>
+        <h2>INSCRIPTION</h2>
+        <div id="registerForm">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="regEmail" class="form-input" placeholder="Ohatra: user@gmail.com">
+            </div>
+            <div class="form-group">
+                <label>Mot de passe</label>
+                <input type="password" id="regPass" class="form-input" placeholder="********">
+            </div>
+            <button class="btn-auth" onclick="handleRegister()">HISORATRA ANARANA</button>
+        </div>
+        <div class="switch-auth">
+            Efa manana kaonty? <a href="login.html">Hiditra</a>
+        </div>
+    </div>
+    <a href="index.html" class="back-home"><i class="fa-solid fa-arrow-left"></i> Hiverina amin'ny fandraisana</a>
+
+    <script type="module">
+        import { supabase } from './supabaseClient.js'
+
+        window.handleRegister = async function() {
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPass').value;
+            
+            const { data, error } = await supabase.auth.signUp({
+                email: email,
+                password: password,
+            });
+
+            if (error) {
+                alert("Fahadisoana: " + error.message);
+            } else {
+                alert("Arahabaina! Efa manana kaonty Booyah Store ianao. Afaka miditra (login) amin'izay.");
+                window.location.href = 'login.html';
+            }
+        }
+    </script>
+</body>
+</html>
