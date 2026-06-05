@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booyah Store - Admin</title>
+    <!-- Google Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        html { background: #000b1e; }
+        body { 
+            font-family: 'Rajdhani', sans-serif; 
+            background: #000b1e; /* Loko manga tsy miova amin'ny Dark Blue mode */
+            animation: fadeIn 0.8s ease-out; /* Animation rehefa misokatra ny pejy */
+            color: white; padding: 20px; text-align: center;
+            min-height: 100vh;
+            transition: all 0.3s; /* Transition ho an'ny mode */
+        }
+        /* Light Mode Styles */
+        body.light-mode {
+            background-color: #e0e7eb; /* Manga maivana kokoa */
+            color: #1a1a1a;
+        }
+        body.light-mode .header { color: #0056b3; }
+        body.light-mode .admin-controls { background: #ffffff; border-color: #ccc; }
+        body.light-mode .search-bar { background: #f0f0f0; border-color: #ccc; color: #1a1a1a; }
+        body.light-mode .filter-btn { background: #e0e7eb; border-color: #ccc; color: #1a1a1a; }
+        body.light-mode .filter-btn.active { background: #0056b3; border-color: #0056b3; color: white; }
+        body.light-mode .order-card { background: #ffffff; border-color: #ccc; box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); }
+        body.light-mode .order-card:hover { border-color: #0056b3; box-shadow: 0 0 15px rgba(0, 86, 179, 0.3); }
+        body.light-mode .card-header { border-color: #eee; }
+        body.light-mode .pack-tag { color: #0056b3; }
+        body.light-mode .info-label { color: #888; }
+        body.light-mode .info-value { color: #333; }
+        body.light-mode .tid-box { background: #f0f0f0; border-color: #008000; }
+        body.light-mode .tid-box span:last-child { color: #008000; }
+        body.light-mode .btn-done { background: #008000; color: white; }
+        body.light-mode .btn-done:disabled { background: #ccc; color: #888; border-color: #aaa; }
+        body.light-mode .status-toggle-container { background: #ffffff; border-color: #ccc; }
+        body.light-mode .slider { background-color: #ccc; }
+        body.light-mode input:checked + .slider { background-color: #008000; box-shadow: 0 0 10px rgba(0, 128, 0, 0.5); }
+        body.light-mode #adminStatusText { color: #008000; }
+        body.light-mode .mode-btn { background: #e0e7eb; border-color: #ccc; color: #1a1a1a; }
+
+        /* Dark Blue Mode Styles (default) */
+        body.dark-blue-mode {
+            background-color: #000b1e;
+            color: #e0f7ff;
+        }
+        body.dark-blue-mode .header { color: #00d4ff; }
+        body.dark-blue-mode .admin-controls { background: rgba(42, 42, 42, 0.9); border-color: #444; }
+        body.dark-blue-mode .search-bar { background: rgba(42, 42, 42, 0.8); border-color: #444; color: white; }
+        body.dark-blue-mode .filter-btn { background: #333; border-color: #555; color: white; }
+        body.dark-blue-mode .filter-btn.active { background: #00d4ff; border-color: #00d4ff; color: #1a1a1a; }
+        body.dark-blue-mode .order-card { background: rgba(42, 42, 42, 0.9); border-color: #444; }
+        body.dark-blue-mode .mode-btn { background: #333; border-color: #555; color: white; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Animation rehefa hivoaka ny pejy */
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-10px); }
+        }
+        .fade-out {
+            animation: fadeOut 0.3s ease-in forwards;
+        }
+
+        .container { max-width: 600px; margin: 0 auto; position: relative; }
+        .header { font-family: 'Orbitron', sans-serif; color: #00d4ff; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
+        
+        .mode-container {
+            display: flex;
+            gap: 8px;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        /* Icon Colors */
+        .fa-sun { color: #ffae00; }
+        .fa-moon { color: #00d4ff; }
+
+        .mode-btn {
+            background: #333;
+        }
+        .mode-btn {
+            background: #333;
+            border: 1px solid #555;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        /* Search & Filters */
+        .admin-controls { margin-bottom: 20px; display: flex; flex-direction: column; gap: 15px; }
+        
+        /* Dashboard Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        .stat-value { font-size: 1.2rem; font-weight: bold; color: #00ff88; display: block; }
+        .stat-label { font-size: 0.7rem; text-transform: uppercase; color: #888; letter-spacing: 1px; }
+
+        .search-bar {
+            width: 100%; padding: 12px 20px; border-radius: 25px; border: 1px solid #444;
+            background: rgba(42, 42, 42, 0.8); color: white; outline: none; box-sizing: border-box;
+        }
+        .filter-group { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        .filter-btn {
+            background: #333; border: 1px solid #555; color: white; padding: 8px 15px;
+            border-radius: 20px; cursor: pointer; transition: 0.3s; font-size: 0.8rem;
+        }
+        .filter-btn.active { background: #00d4ff; border-color: #00d4ff; color: #1a1a1a; font-weight: bold; }
+
+        /* User Message Card Style for Inbox */
+        .user-chat-card {
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-align: left;
+        }
+        .user-chat-card:hover {
+            background: rgba(0, 212, 255, 0.15);
+            border-color: #00d4ff;
+            transform: translateX(5px);
+        }
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: #001a3d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #00d4ff;
+            color: #00d4ff;
+        }
+        .user-info-chat { flex: 1; overflow: hidden; }
+        .user-email-chat { font-weight: bold; font-size: 0.9rem; color: #00d4ff; }
+        .last-msg-preview { font-size: 0.75rem; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* Order Cards */
+        .order-card { 
+            background: rgba(0, 26, 61, 0.9); border: 1px solid #00d4ff; border-radius: 15px; 
+            padding: 20px; margin-bottom: 20px; text-align: left; position: relative;
+            transition: 0.3s; box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+        }
+        .order-card:hover { border-color: #00d4ff; box-shadow: 0 0 15px rgba(0, 212, 255, 0.3); }
+        
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .pack-tag { color: #00d4ff; font-weight: bold; font-size: 1.1rem; }
+        .status-badge { padding: 4px 10px; border-radius: 5px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
+        
+        /* Status Styles miaraka amin'ny Glow */
+        .status-attente { background: rgba(255, 204, 0, 0.1); color: #ffcc00; border: 1px solid #ffcc00; box-shadow: 0 0 10px rgba(255, 204, 0, 0.2); }
+        .status-termine { background: rgba(0, 255, 136, 0.1); color: #00ff88; border: 1px solid #00ff88; box-shadow: 0 0 10px rgba(0, 255, 136, 0.2); }
+        .status-rejete { background: rgba(255, 68, 68, 0.1); color: #ff4444; border: 1px solid #ff4444; box-shadow: 0 0 10px rgba(255, 68, 68, 0.2); }
+
+        .order-info { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.9rem; }
+        .info-label { color: #888; display: block; font-size: 0.75rem; }
+        .info-value { color: #eee; font-weight: 500; }
+
+        .tid-box { background: rgba(0, 0, 0, 0.3); padding: 10px; border-radius: 8px; margin-top: 15px; font-family: monospace; border: 1px solid rgba(255, 255, 255, 0.05); }
+
+        /* Cage mlay ho an'ny bokotra Admin */
+        .admin-actions {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px dashed rgba(0, 212, 255, 0.3);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: space-between;
+        }
+        
+        .action-btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+        .action-btn:active { transform: scale(0.95); }
+
+        .btn-valide { background: #00ff88; color: #000; }
+        .btn-valide:hover { background: #00cc6e; box-shadow: 0 0 15px rgba(0, 255, 136, 0.4); }
+        .btn-rejete { background: #ff4444; color: #fff; }
+        .btn-rejete:hover { background: #cc0000; box-shadow: 0 0 15px rgba(255, 68, 68, 0.4); }
+        .btn-attente { background: #333; color: #ffcc00; border-color: #ffcc00; }
+        .btn-attente:hover { background: #444; box-shadow: 0 0 15px rgba(255, 204, 0, 0.2); }
+
+        /* Status Toggle Style */
+        .status-toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 15px;
+            border: 1px solid rgba(0, 212, 255, 0.4);
+        }
+        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #444; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #00ff88; box-shadow: 0 0 10px #00ff88; }
+        input:checked + .slider:before { transform: translateX(24px); }
+        #adminStatusText { font-weight: bold; min-width: 80px; }
+
+        .back-link { 
+            color: #888; text-decoration: none; display: block; margin-top: 20px; cursor: pointer; font-size: 0.9rem;
+        }
+        .back-link:hover { color: #00d4ff; }
+
+        .empty-state { padding: 50px; color: #666; font-style: italic; }
+
+        /* Modal Styles for Order Details */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 1000;
+            overflow-y: auto;
+            backdrop-filter: blur(5px);
+        }
+        .order-detail-modal {
+            background: #001a3d; /* Dark blue background */
+            width: 90%;
+            max-width: 450px;
+            margin: 50px auto;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: left;
+            border: 2px solid #00d4ff;
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.5);
+            position: relative;
+        }
+        .order-detail-modal .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            color: #888;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .order-detail-modal .close-modal:hover {
+            color: #00d4ff;
+        }
+        .order-detail-modal .modal-header {
+            font-size: 1.2rem; font-weight: bold; margin-bottom: 20px; color: #00d4ff; border-bottom: 1px solid rgba(0, 212, 255, 0.2); padding-bottom: 10px; font-family: 'Orbitron', sans-serif;
+        }
+        .order-detail-modal .summary-item {
+            margin-bottom: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 10px;
+        }
+        .order-detail-modal .summary-item:last-child { border-bottom: none; }
+        .order-detail-modal .summary-label {
+            display: block; font-size: 0.7rem; color: #00d4ff; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .order-detail-modal .summary-value {
+            display: block; font-size: 1rem; color: #fff; font-weight: bold;
+        }
+        /* Specific color for status in modal */
+        .order-detail-modal .status-attente { color: #ffcc00; }
+        .order-detail-modal .status-termine { color: #00ff88; }
+        .order-detail-modal .status-rejete { color: #ff4444; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div onclick="navigateTo('index.html')" class="back-link" style="margin-bottom: 20px; text-align: left; width: fit-content;"><i class="fa-solid fa-arrow-left"></i> Retour à l'accueil</div>
+        <div style="display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 25px;">
+            <div class="mode-container">
+                <button class="mode-btn" onclick="setMode('light')"><i class="fa-solid fa-sun"></i></button>
+                <button class="mode-btn" onclick="setMode('dark-blue')"><i class="fa-solid fa-moon"></i></button>
+            </div>
+            <h1 class="header" style="margin: 0;"><i class="fa-solid fa-screwdriver-wrench"></i> Commandes Reçues</h1>
+        </div>
+        
+        <div class="status-toggle-container">
+            <span style="font-size: 0.9rem; color: #aaa;">Status Admin:</span>
+            <label class="switch">
+                <input type="checkbox" id="adminStatusToggle" onclick="toggleAdminStatus()">
+                <span class="slider"></span>
+            </label>
+            <span id="adminStatusText">...</span>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-label">Total Ventes</span>
+                <span class="stat-value" id="totalSales">0 Ar</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Commandes</span>
+                <span class="stat-value" id="totalOrdersCount">0</span>
+            </div>
+        </div>
+
+        <div class="admin-controls">
+            <input type="text" class="search-bar" id="adminSearch" onkeyup="filterOrders()" placeholder="Rechercher par UID ou Transaction ID...">
+            <div class="filter-group">
+                <button class="filter-btn active" onclick="setFilter('all', this)">Tout</button>
+                <button class="filter-btn" onclick="setFilter('En attente', this)">En attente</button>
+                <button class="filter-btn" onclick="setFilter('Terminé', this)">Terminé</button>
+                <button class="filter-btn" id="btnRecharges" onclick="showDepositsTab(this)">Recharges</button>
+                <button class="filter-btn" id="btnUsers" onclick="showUsersTab(this)">Utilisateurs</button>
+            </div>
+            <button class="filter-btn" id="btnMessages" onclick="showMessagesTab(this)">Messages</button>
+        </div>
+
+        <div id="ordersList"><i class="fa-solid fa-spinner fa-spin"></i> Chargement des commandes...</div>
+    </div>
+
+    <!-- Order Detail Modal -->
+    <div id="orderDetailOverlay" class="modal-overlay">
+        <div class="order-detail-modal">
+            <span class="close-modal" onclick="closeOrderDetailModal()"><i class="fa-solid fa-circle-xmark"></i></span>
+            <div class="modal-header">Détails de la Commande</div>
+            
+            <div class="summary-item">
+                <span class="summary-label">Order ID</span>
+                <span class="summary-value" id="modal-order-id">...</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Statut</span>
+                <span class="summary-value" id="modal-order-status">...</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Pack</span>
+                <span class="summary-value" id="modal-order-pack">...</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Quantité</span>
+                <span class="summary-value" id="modal-order-qty">...</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Total</span>
+                <span class="summary-value" id="modal-order-total">...</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Player ID (UID)</span>
+                <span class="summary-value" id="modal-order-uid">...</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Pseudo</span>
+                <span class="summary-value" id="modal-order-pseudo">...</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Numéro de Téléphone</span>
+                <span class="summary-value" id="modal-order-phone">...</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">ID Transaction (Orange Money)</span>
+                <span class="summary-value" id="modal-order-tid">...</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Date de Commande</span>
+                <span class="summary-value" id="modal-order-date">...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Admin Window -->
+    <div id="chatWindow" class="chat-window">
+        <div class="chat-header">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <img src="logo.jpg" style="width:25px; height:25px; border-radius:50%;">
+                <span style="font-family:'Orbitron'; font-size:0.8rem; color:#00d4ff; font-weight:bold;" id="chattingWithUser">ADMIN</span>
+                <div id="chatStatusDot" style="width:8px; height:8px; border-radius:50%; background:#ff4444;"></div>
+            </div>
+            <i class="fa-solid fa-xmark" onclick="toggleChat()" style="cursor:pointer; color:#888;"></i>
+        </div>
+        <div id="chatMessages" class="chat-messages">
+            <div class="msg msg-admin">Salama! Misafidia mpampiasa hiresahana. / Bonjour! Veuillez sélectionner un utilisateur pour discuter.</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" class="chat-input" placeholder="Hafatra..." onkeypress="if(event.key==='Enter') sendMessage()">
+            <button class="chat-send-btn" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+    <script>
+        // Navigation function
+        function navigateTo(url) {
+            document.body.classList.add('fade-out');
+            setTimeout(() => {
+                window.location.href = url;
+            }, 300);
+        }
+
+        // Mode Management (mitovy amin'ny index.html)
+        function setMode(mode) {
+            document.body.classList.remove('light-mode', 'dark-blue-mode');
+            if (mode === 'light') {
+                document.body.classList.add('light-mode');
+            } else if (mode === 'dark-blue') {
+                document.body.classList.add('dark-blue-mode');
+            }
+            localStorage.setItem('theme', mode);
+        }
+
+        // Sync theme across tabs
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'theme') setMode(e.newValue);
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'dark-blue';
+            setMode(savedTheme);
+        });
+    </script>
+    <script type="module">
+        import { supabase } from './supabaseClient.js'
+
+        let allOrders = [];
+        let currentFilter = 'all';
+
+        // 1. Gérer le status Online/Offline de l'Admin
+        async function fetchAdminStatus() {
+            const { data } = await supabase.from('admin').select('online').eq('id', 'status').single();
+            if (data) updateAdminUI(data.online);
+        }
+
+        function updateAdminUI(isOnline) {
+            const text = document.getElementById('adminStatusText');
+            const checkbox = document.getElementById('adminStatusToggle');
+            if (checkbox) checkbox.checked = isOnline;
+            text.innerText = isOnline ? 'En ligne' : 'Hors ligne';
+            text.style.color = isOnline ? '#00ff88' : '#ff4444';
+            window.isAdminOnline = isOnline; // Set the global variable
+            const chatDot = document.getElementById('chatStatusDot');
+            if (chatDot) chatDot.style.background = isOnline ? "#00ff88" : "#ff4444";
+        }
+        fetchAdminStatus();
+
+        supabase.channel('admin_changes')
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'admin', filter: 'id=eq.status' }, 
+            payload => updateAdminUI(payload.new.online))
+            .subscribe();
+
+        window.toggleAdminStatus = async () => {
+            const checkbox = document.getElementById('adminStatusToggle');
+            await supabase.from('admin').update({ online: checkbox.checked }).eq('id', 'status');
+        };
+
+        // 2. Charger les commandes
+        async function loadOrders() {
+            const { data, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false });
+            if (data) {
+                allOrders = data;
+                updateStats();
+                if (['all', 'En attente', 'Terminé'].includes(currentFilter)) {
+                    renderOrders();
+                }
+            }
+        }
+
+        // Calculer les statistiques (Ventes totales des commandes terminées)
+        function updateStats() {
+            const total = allOrders.reduce((acc, curr) => acc + (curr.status === 'Terminé' ? curr.total : 0), 0);
+            document.getElementById('totalSales').innerText = total.toLocaleString() + " Ar";
+            document.getElementById('totalOrdersCount').innerText = allOrders.length;
+        }
+
+        // Realtime pour les commandes
+        supabase.channel('orders_sync')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => {
+                const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3');
+                audio.play().catch(() => {}); // Jouer un son si possible
+                loadOrders();
+            })
+            .subscribe();
+
+        // Realtime pour les recharges
+        supabase.channel('deposits_sync')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'deposits' }, () => {
+                if (currentFilter === 'deposits') showDepositsTab(document.querySelector('button[onclick*="showDepositsTab"]'));
+            }).subscribe();
+
+        // Realtime pour les profils utilisateurs
+        supabase.channel('profiles_sync')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, () => {
+                if (currentFilter === 'users') showUsersTab(document.querySelector('button[onclick*="showUsersTab"]'));
+            }).subscribe();
+
+        // 3. Afficher les commandes
+        window.renderOrders = () => {
+            const list = document.getElementById('ordersList');
+            const searchTerm = document.getElementById('adminSearch').value.toLowerCase();
+            
+            const filtered = allOrders.filter(o => {
+                const matchesFilter = currentFilter === 'all' || o.status === currentFilter;
+                const matchesSearch = o.uid.toLowerCase().includes(searchTerm) || o.tid.toLowerCase().includes(searchTerm);
+                return matchesFilter && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                list.innerHTML = '<div class="empty-state">Aucune commande trouvée.</div>';
+                return;
+            }
+
+            list.innerHTML = filtered.map(order => `
+                <div class="order-card">
+                    <div class="card-header">
+                        <div>
+                            <div class="pack-tag">${order.pack} <span style="font-size:0.8rem; color:#888">x${order.qty}</span></div>
+                            <div style="font-size:0.7rem; color:#888; margin-top:3px">
+                                <i class="fa-solid fa-calendar-day"></i> ${new Date(order.created_at).toLocaleString('fr-FR')}
+                            </div>
+                        </div>
+                        <span class="status-badge ${order.status === 'Terminé' ? 'status-termine' : (order.status === 'Rejeté' ? 'status-rejete' : 'status-attente')}">${order.status}</span>
+                    </div>
+                    <div style="font-size: 0.7rem; color: #666; margin-bottom: 10px;">
+                        Order ID: <span style="color: #aaa;">${order.id}</span>
+                    </div>
+                    <div class="order-info">
+                        <div><span class="info-label">Player ID (UID)</span><span class="info-value">${order.uid}</span></div>
+                        <div><span class="info-label">Pseudo</span><span class="info-value">${order.pseudo || 'N/A'}</span></div>
+                        <div><span class="info-label">Numéro</span><span class="info-value">${order.phone}</span></div>
+                        <div><span class="info-label">Total</span><span class="info-value" style="color:#00ff88">${order.total.toLocaleString()} Ar</span></div>
+                    </div>
+                    <div class="tid-box">
+                        <span class="info-label">Transaction ID (Orange Money)</span>
+                        <span style="color:#00ff88; font-weight:bold;">${order.tid}</span>
+                    </div>
+                    <div class="admin-actions">
+                        <button class="action-btn btn-valide" onclick="updateStatus('${order.id}', 'Terminé')">TERMINÉ</button>
+                        <button class="action-btn btn-rejete" onclick="updateStatus('${order.id}', 'Rejeté')">REJETER</button>
+                        <button class="action-btn btn-attente" onclick="updateStatus('${order.id}', 'En attente')">ATTENTE</button>
+                        <button class="action-btn btn-view" onclick="showOrderDetailModal('${order.id}')">VOIR</button>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        window.showOrderDetailModal = (orderId) => {
+            const order = allOrders.find(o => o.id === orderId);
+            if (!order) return;
+
+            document.getElementById('modal-order-id').innerText = order.id;
+            document.getElementById('modal-order-pack').innerText = `${order.pack}`;
+            document.getElementById('modal-order-qty').innerText = order.qty;
+            document.getElementById('modal-order-total').innerText = `${order.total.toLocaleString()} Ar`;
+            document.getElementById('modal-order-uid').innerText = order.uid;
+            document.getElementById('modal-order-pseudo').innerText = order.pseudo || 'N/A';
+            document.getElementById('modal-order-phone').innerText = order.phone;
+            document.getElementById('modal-order-tid').innerText = order.tid;
+            document.getElementById('modal-order-date').innerText = new Date(order.created_at).toLocaleString('fr-FR');
+
+            const statusElement = document.getElementById('modal-order-status');
+            statusElement.innerText = order.status;
+            statusElement.className = 'summary-value'; // Reset classes
+            if (order.status === 'Terminé') statusElement.classList.add('status-termine');
+            else if (order.status === 'Rejeté') statusElement.classList.add('status-rejete');
+            else statusElement.classList.add('status-attente');
+
+            document.getElementById('orderDetailOverlay').style.display = 'block';
+        };
+
+        window.closeOrderDetailModal = () => {
+            document.getElementById('orderDetailOverlay').style.display = 'none';
+        };
+
+        window.updateStatus = async (id, newStatus) => {
+            await supabase.from('orders').update({ status: newStatus }).eq('id', id);
+        };
+
+        window.setFilter = (filter, btn) => {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderOrders();
+        };
+
+        window.filterOrders = () => {
+            if (currentFilter === 'deposits') {
+                showDepositsTab(document.querySelector('button[onclick*="showDepositsTab"]'));
+            } else if (currentFilter === 'users') {
+                showUsersTab(document.querySelector('button[onclick*="showUsersTab"]'));
+            } else {
+                renderOrders();
+            }
+        };
+
+        // --- Fitantanana ny Recharges ---
+        window.showDepositsTab = async (btn) => {
+            currentFilter = 'deposits';
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const list = document.getElementById('ordersList');
+            const searchTerm = document.getElementById('adminSearch').value.toLowerCase();
+            list.innerHTML = 'Fakana ny fangatahana recharge...';
+
+            const { data, error } = await supabase.from('deposits')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (data) {
+                if (data.length === 0) { list.innerHTML = '<div class="empty-state">Aucune recharge.</div>'; return; }
+                
+                const filtered = data.filter(d => d.tid.toLowerCase().includes(searchTerm) || (d.email && d.email.toLowerCase().includes(searchTerm)));
+                list.innerHTML = filtered.map(dep => `
+                    <div class="order-card" style="border-color: ${dep.status === 'Terminé' ? '#00ff88' : '#ffcc00'}">
+                        <div class="card-header">
+                            <span class="pack-tag">RECHARGE: ${dep.amount} Ar</span>
+                            <span class="status-badge ${dep.status === 'Terminé' ? 'status-termine' : 'status-attente'}">${dep.status}</span>
+                        </div>
+                        <div class="order-info">
+                            <div><span class="info-label">Email</span><span class="info-value">${dep.email}</span></div>
+                            <div><span class="info-label">TID</span><span class="info-value">${dep.tid}</span></div>
+                            <div><span class="info-label">Numéro Expéditeur</span><span class="info-value">${dep.phone || 'N/A'}</span></div>
+                        </div>
+                        <div class="admin-actions">
+                            ${dep.status === 'En attente' 
+                                ? `<button class="action-btn btn-valide" onclick="approveDeposit('${dep.id}', '${dep.user_id}', ${dep.amount}, this)">VALIDER</button>` 
+                                : `<span style="color:#00ff88; font-size:0.8rem; font-weight:bold;"><i class="fa-solid fa-check-double"></i> DEJA VALIDE</span>`}
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // --- Fitantanana ny Utilisateurs (Solde) ---
+        window.showUsersTab = async (btn) => {
+            currentFilter = 'users';
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const list = document.getElementById('ordersList');
+            const searchTerm = document.getElementById('adminSearch').value.toLowerCase();
+            list.innerHTML = 'Fakana ny lisitry ny mpampiasa...';
+
+            const { data, error } = await supabase.from('profiles')
+                .select('*')
+                .order('balance', { ascending: false });
+
+            if (data) {
+                const filtered = data.filter(u => u.pseudo?.toLowerCase().includes(searchTerm) || u.id.toLowerCase().includes(searchTerm));
+                list.innerHTML = filtered.map(u => `
+                    <div class="order-card" style="border-color: #00d4ff">
+                        <div class="card-header">
+                            <span class="pack-tag">UTILISATEUR</span>
+                            <span class="status-badge status-termine">${u.balance.toLocaleString()} Ar</span>
+                        </div>
+                        <div class="order-info" style="grid-template-columns: 1fr;">
+                            <div><span class="info-label">User ID (UUID)</span><span class="info-value">${u.id}</span></div>
+                            <div><span class="info-label">Pseudo</span><span class="info-value">${u.pseudo || 'N/A'}</span></div>
+                            <div><span class="info-label">Dernière mise à jour</span><span class="info-value">${new Date(u.updated_at).toLocaleString()}</span></div>
+                        </div>
+                        <div class="admin-actions" style="display: flex; flex-direction: column; gap: 10px;">
+                            <div style="display: flex; gap: 10px; width: 100%;">
+                                <input type="number" id="newBal_${u.id}" placeholder="Solde vaovao" style="flex:1; background:#000; color:#fff; border:1px solid #444; padding:10px; border-radius:8px;">
+                                <button class="action-btn btn-valide" style="width: 100px;" onclick="updateUserBalance('${u.id}')">MODIFIER</button>
+                            </div>
+                            <button class="action-btn btn-rejete" style="width: 100%; margin: 0; background: #ff4444; color: white;" onclick="deleteUser('${u.id}')">SUPPRIMER L'UTILISATEUR</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        window.updateUserBalance = async (userId) => {
+            const newVal = document.getElementById(`newBal_${userId}`).value;
+            if (!newVal) { alert("Ampidiro ny solde vaovao"); return; }
+
+            const { error } = await supabase.from('profiles')
+                .update({ balance: parseInt(newVal), updated_at: new Date() })
+                .eq('id', userId);
+
+            if (error) {
+                alert("Fahadisoana: " + error.message);
+            } else {
+                alert("Solde voasolo!");
+                showUsersTab(document.querySelector('button[onclick*="showUsersTab"]'));
+            }
+        }
+
+        window.deleteUser = async (userId) => {
+            if (!confirm("Tena hovonoina tanteraka ve ity mpampiasa ity? (Ny profile-ny ihany no ho voafafa amin'izao)")) return;
+
+            const { error } = await supabase.from('profiles')
+                .delete()
+                .eq('id', userId);
+
+            if (error) {
+                alert("Fahadisoana: " + error.message);
+            } else {
+                alert("Mpampiasa voafafa amin'ny lisitra!");
+                showUsersTab(document.querySelector('button[onclick*="showUsersTab"]'));
+            }
+        }
+
+        window.approveDeposit = async (depId, userId, amount, btnElement) => {
+            const originalText = btnElement.innerText;
+            btnElement.disabled = true;
+            btnElement.innerText = "TRAITEMENT...";
+
+            try {
+                // 1. Fakana ny solde ankehitriny
+                const { data: profile } = await supabase.from('profiles').select('balance').eq('id', userId).single();
+                const newBalance = (profile?.balance || 0) + amount;
+                
+                // 2. Fanavaozana ny solde (Balance update)
+                const { error: balError } = await supabase.from('profiles').update({ balance: newBalance }).eq('id', userId);
+                if (balError) throw balError;
+                
+                // 3. Fanovana ny status ho 'Terminé'
+                const { error: depError } = await supabase.from('deposits').update({ status: 'Terminé' }).eq('id', depId);
+                if (depError) throw depError;
+                
+                alert("Tafiditra ny solde ary efa 'Terminé' ny fangatahana!");
+                
+                // Refresh ny lisitra mba hita mivantana ny fiovana
+                const depositMenuBtn = document.querySelector('button[onclick*="showDepositsTab"]');
+                showDepositsTab(depositMenuBtn);
+            } catch (err) {
+                alert("Nisy olana: " + err.message);
+                btnElement.disabled = false;
+                btnElement.innerText = originalText;
+            }
+        }
+
+        // --- Chat Admin Functions ---
+        window.currentChatUserId = null; // ID an'ny mpampiasa iresahana amin'izao fotoana izao
+        window.currentChatUserEmail = null; // Email an'ny mpampiasa iresahana amin'izao fotoana izao
+
+        window.toggleChat = function() {
+            const win = document.getElementById('chatWindow');
+            if (!win) return;
+            const isVisible = win.style.display === 'flex';
+            win.style.display = isVisible ? 'none' : 'flex';
+            if (!isVisible) {
+                const msgs = document.getElementById('chatMessages');
+                loadChatHistory(); // Maka ny tantaran'ny resaka rehefa manokatra chat
+            }
+        }
+
+        window.appendMessage = function(text, sender) {
+            const container = document.getElementById('chatMessages');
+            if (!container) return;
+            const div = document.createElement('div');
+            div.className = `msg msg-${sender}`;
+            div.innerHTML = text.replace(/\n/g, '<br>');
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        window.sendMessage = async function() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            if (!window.currentChatUserId) {
+                alert("Veuillez sélectionner un utilisateur pour discuter.");
+                return;
+            }
+
+            window.appendMessage(text, 'admin');
+            input.value = '';
+
+            // Tahirizina any amin'ny backend (Supabase) ny hafatra
+            await supabase.from('messages').insert([{
+                user_id: window.currentChatUserId,
+                sender: 'admin',
+                content: text,
+                user_email: window.currentChatUserEmail // Ampiasaina ny email an'ny mpampiasa voafidy
+            }]);
+
+            // Tsy misy auto-reply ho an'ny admin mandefa hafatra
+        }
+
+        async function loadChatHistory() {
+            const container = document.getElementById('chatMessages');
+            container.innerHTML = ''; // Fafana aloha ny hafatra rehetra
+
+            if (!window.currentChatUserId) {
+                container.innerHTML = '<div class="msg msg-admin">Misafidia mpampiasa hiresahana...</div>';
+                return;
+            }
+
+            document.getElementById('chattingWithUser').innerText = window.currentChatUserEmail.split('@')[0].toUpperCase();
+
+            const { data: messages } = await supabase.from('messages')
+                .select('*')
+                .eq('user_id', window.currentChatUserId)
+                .order('created_at', { ascending: true });
+
+            if (messages) {
+                messages.forEach(m => window.appendMessage(m.content, m.sender));
+            }
+        }
+
+        // --- Inbox logic ---
+        window.showMessagesTab = async (btn) => {
+            currentFilter = 'messages';
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const list = document.getElementById('ordersList');
+            list.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Fakana ny lisitry ny hafatra...';
+
+            // Alaina ny hafatra rehetra mba hahitana hoe iza no niresaka farany
+            const { data: messages, error } = await supabase
+                .from('messages')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                list.innerHTML = "Error: " + error.message;
+                return;
+            }
+
+            // Grouping by user_id to show only the last conversation
+            const uniqueUsers = {};
+            messages.forEach(m => {
+                if (!uniqueUsers[m.user_id]) {
+                    uniqueUsers[m.user_id] = m;
+                }
+            });
+
+            const userList = Object.values(uniqueUsers);
+
+            if (userList.length === 0) {
+                list.innerHTML = '<div class="empty-state">Tsy misy hafatra voaray.</div>';
+                return;
+            }
+
+            list.innerHTML = userList.map(m => `
+                <div class="user-chat-card" onclick="openConversation('${m.user_id}', '${m.user_email}')">
+                    <div class="user-avatar"><i class="fa-solid fa-user"></i></div>
+                    <div class="user-info-chat">
+                        <div class="user-email-chat">${m.user_email}</div>
+                        <div class="last-msg-preview">${m.sender === 'admin' ? 'Vous: ' : ''}${m.content}</div>
+                    </div>
+                    <div style="font-size: 0.65rem; color: #666;">
+                        ${new Date(m.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        window.openConversation = (userId, email) => {
+            window.currentChatUserId = userId;
+            window.currentChatUserEmail = email;
+            window.toggleChat();
+        };
+
+        // Realtime for Chat (Admin side)
+        supabase.channel('admin_messages_realtime')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+                const msg = payload.new;
+                // Raha misokatra ny chat an'io olona io dia ampidirina mivantana
+                if (document.getElementById('chatWindow').style.display === 'flex' && msg.user_id === window.currentChatUserId) {
+                    if (msg.sender !== 'admin') {
+                        window.appendMessage(msg.content, 'user');
+                    }
+                } else {
+                    // Raha tsy misokatra dia havaozina ny tabilao hafatra raha eo amin'io ny admin
+                    if (currentFilter === 'messages') {
+                        showMessagesTab(document.getElementById('btnMessages'));
+                    }
+                }
+            })
+            .subscribe();
+
+        // Initialisation
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchAdminStatus();
+            loadOrders();
+            if (localStorage.getItem('theme') === 'light') {
+                setMode('light');
+            }
+        });
+    </script>
+</body>
+</html>
