@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booyah Store - Accueil</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8335288831980794"
+     crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --blue-line: #007bff;
+            --nav-bg: #f8f9fa;
+        }
+
+        body.dark-blue-mode {
+            --bg-color: #000b1e;
+            --text-color: #ffffff;
+            --blue-line: #00d4ff;
+            --nav-bg: #001a3d;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: 0.3s;
+            padding-bottom: 80px;
+        }
+
+        .main-wrapper {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+        }
+
+        .logo-square {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .separator {
+            width: 4px;
+            height: 30px;
+            background-color: var(--text-color);
+            border-radius: 2px;
+        }
+
+        .brand {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            display: flex;
+            gap: 5px;
+        }
+
+        .blue-text { color: #007bff; }
+        .yellow-text { color: #ffc107; }
+
+        .blue-divider {
+            height: 2px;
+            background-color: var(--blue-line);
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        /* Search Bar */
+        .search-container {
+            margin: 20px 0;
+            position: relative; /* Ajouté pour positionner l'icône à l'intérieur */
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 25px;
+            border: 1px solid #ccc;
+            background: #f1f1f1;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        /* Games Grid */
+        .section-title {
+            text-align: left;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin: 20px 0;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .game-card {
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            opacity: 0;
+        }
+        
+        .games-grid a:nth-child(odd) { animation: slideInLeft 0.8s ease-out forwards; }
+        .games-grid a:nth-child(even) { animation: slideInRight 0.8s ease-out forwards; }
+        
+        .games-grid a:nth-child(1) { animation-delay: 0.1s; }
+        .games-grid a:nth-child(2) { animation-delay: 0.2s; }
+        .games-grid a:nth-child(3) { animation-delay: 0.3s; }
+        .games-grid a:nth-child(4) { animation-delay: 0.4s; }
+        .games-grid a:nth-child(5) { animation-delay: 0.5s; }
+
+        header, .search-container, .section-title, .instruction-box {
+            animation: fadeInScale 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        .game-card img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .game-card img {
+            width: 145px; /* Nohalehibeazina kely ny logo */
+            height: 145px;
+            margin: 0 auto; /* Centrer l'image */
+        }
+        .game-card.large {
+            grid-column: span 1;
+        }
+
+        /* Footer Info */
+        .footer-info {
+            margin-top: 40px;
+            text-align: left;
+            padding: 10px;
+        }
+
+        .footer-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .footer-item i { /* Taille des icônes de pied de page */
+            color: #007bff;
+            font-size: 1.5rem; /* Icônes plus grandes */
+        }
+        .footer-info.centered .footer-item {
+            justify-content: center; /* Centrer les éléments du footer */
+        }
+
+        .contact-cage {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0, 212, 255, 0.05); /* Background légèrement bleu */
+            border: 2px solid var(--blue-line); /* Bordure bleue */
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+        }
+        .footer-item span { font-size: 1.1rem; font-weight: bold; } /* Texte plus grand */
+
+
+        /* Admin Status Display */
+        .admin-status-display {
+            text-align: left;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+        .admin-status-display .status-text.status-online {
+            color: #00ff88; /* Green */
+        }
+        .admin-status-display .status-text.status-offline {
+            color: #ff4444; /* Red */
+        }
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 5px;
+            background-color: #888;
+            vertical-align: middle;
+        }
+        .status-dot.online { background-color: #00ff88; box-shadow: 0 0 5px #00ff88; }
+        .status-dot.offline { background-color: #ff4444; }
+        .status-text { vertical-align: middle; }
+
+        /* Bottom Nav */ /* Styles pour le mode sombre */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--nav-bg);
+            /* Ajustement pour l'élévation du bouton plus */
+            padding-bottom: 10px; /* Espace en bas pour le bouton plus */
+            padding-top: 10px;
+            box-sizing: border-box;
+            height: 70px; /* Hauteur fixe pour la barre de navigation */
+            
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+
+        .nav-item i {
+            font-size: 1.2rem;
+            margin-bottom: 3px;
+        }
+
+        .plus-container {
+            background: #007bff;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem; /* Taille du plus */
+            margin-top: -35px; /* Élévation du bouton plus */
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.4);
+            transition: transform 0.3s ease;
+            text-decoration: none; /* Enlever le soulignement pour le lien */
+            position: relative; /* Pour le z-index */
+            z-index: 1001; /* Pour qu'il soit au-dessus des autres éléments */
+        }
+        .plus-container i {
+            font-size: 1.8rem; /* Assurer la taille de l'icône */
+        }
+
+        .plus-container:active {
+            transform: scale(0.9); /* Effet de clic */
+        }
+        .nav-divider { width: 1px; height: 25px; background: rgba(0, 212, 255, 0.2); }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        /* Page Loader */
+        #pageLoader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color); z-index: 10000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--blue-line); font-family: 'Orbitron', sans-serif;
+        }
+        .loader-spinner {
+            width: 50px; height: 50px; border: 5px solid rgba(0, 212, 255, 0.2);
+            border-top: 5px solid var(--blue-line); border-radius: 50%; animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Style ho an'ny Modal Historique (Fenetre kely) */
+        .history-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+        .history-window {
+            display: none;
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 400px;
+            background: var(--nav-bg);
+            border: 2px solid var(--blue-line);
+            border-radius: 20px;
+            padding: 20px;
+            z-index: 2001;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+        }
+        .order-card-mini { 
+            background: rgba(255, 255, 255, 0.03); padding: 12px; border-radius: 12px; 
+            margin-bottom: 10px; text-align: left; border: 1px solid rgba(0, 212, 255, 0.2); 
+        }
+        .status-attente { color: #ffcc00; font-weight: bold; font-size: 0.8rem; }
+        .status-termine { color: #00ff88; font-weight: bold; font-size: 0.8rem; }
+        .status-rejete { color: #ff4444; font-weight: bold; font-size: 0.8rem; }
+
+        /* Style ho an'ny Torolalana (Instruction Box) */
+        .instruction-box {
+            margin: 30px auto;
+            padding: 20px;
+            background: rgba(0, 212, 255, 0.05);
+            border: 2px solid var(--blue-line); /* Cage bleue */
+            border-radius: 15px;
+            text-align: left; /* Mba ho mifanintsy tsara ny soratra */
+            width: 100%;
+            max-width: 500px;
+            box-sizing: border-box;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+        }
+        .instruction-title {
+            color: var(--blue-line);
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+        }
+        .instruction-text {
+            font-size: 0.9rem;
+            line-height: 1.8;
+            color: var(--text-color);
+        }
+        .instruction-remark {
+            margin-top: 15px;
+            font-size: 0.8rem; color: var(--text-color); font-style: italic; border-top: 1px solid rgba(0, 212, 255, 0.1); padding-top: 10px;
+        }
+    </style>
+    <script type="module">
+        import { supabase } from './supabaseClient.js'
+
+        window.navigateTo = function(url) {
+            const loader = document.getElementById('pageLoader');
+            if(loader) loader.style.display = 'flex';
+            setTimeout(() => { window.location.href = url; }, 400);
+        }
+
+        window.handlePlusClick = async function() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                window.location.href = 'account.html';
+            } else {
+                window.location.href = 'login.html';
+            }
+        }
+
+        window.toggleHistory = async function() {
+            const win = document.getElementById('historyWindow');
+            const overlay = document.getElementById('historyOverlay');
+            const isVisible = win.style.display === 'block';
+            
+            win.style.display = isVisible ? 'none' : 'block';
+            overlay.style.display = isVisible ? 'none' : 'block';
+            
+            if (!isVisible) {
+                await loadHistory();
+            }
+        }
+
+        async function loadHistory() {
+            const refreshIcon = document.getElementById('refreshHistoryIcon');
+            if (refreshIcon) refreshIcon.classList.add('fa-spin');
+
+            const list = document.getElementById('historyList');
+            const { data: { session } } = await supabase.auth.getSession();
+            const userUid = localStorage.getItem('userUid');
+            
+            if (!session && !userUid) {
+                list.innerHTML = "<p style='font-size:0.85rem; color:#888; text-align:center;'>Aucun historique trouvé.</p>";
+                if (refreshIcon) refreshIcon.classList.remove('fa-spin');
+                return;
+            }
+
+            let historyItems = [];
+
+            // Récupérer les Commandes (Orders)
+            if (userUid) {
+                const { data: orders } = await supabase.from('orders').select('*').eq('uid', userUid);
+                if (orders) historyItems = historyItems.concat(orders.map(o => ({...o, hType: 'order'})));
+            }
+
+            // Récupérer les Recharges (Deposits)
+            if (session) {
+                const { data: deposits } = await supabase.from('deposits').select('*').eq('user_id', session.user.id);
+                if (deposits) historyItems = historyItems.concat(deposits.map(d => ({...d, hType: 'deposit'})));
+            }
+
+            if (historyItems.length === 0) {
+                list.innerHTML = "<p style='font-size:0.85rem; color:#888; text-align:center;'>Vous n'avez pas encore de commande.</p>";
+                return;
+            }
+
+            // Trier par date
+            historyItems.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+            list.innerHTML = historyItems.map(item => {
+                const isDeposit = item.hType === 'deposit';
+                const title = isDeposit ? `RECHARGE COMPTE` : item.pack;
+                const label = isDeposit ? `TID: ${item.tid}` : `UID: ${item.uid}`;
+                const amount = isDeposit ? item.amount : item.total;
+                const borderColor = isDeposit ? '#00ff88' : 'var(--blue-line)';
+
+                return `
+                <div class="order-card-mini" style="border-left: 4px solid ${borderColor}">
+                    <div style="display:flex; justify-content:space-between">
+                        <span style="font-weight:bold; color:${isDeposit ? '#00ff88' : 'var(--blue-line)'}">${title}</span>
+                        <span class="${item.status === 'Terminé' ? 'status-termine' : (item.status === 'Rejeté' ? 'status-rejete' : 'status-attente')}">${item.status}</span>
+                    </div>
+                    <div style="font-size:0.75rem; color:#888; margin-top:5px">${new Date(item.created_at).toLocaleString('fr-FR')}</div>
+                    <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:0.85rem">
+                        <span>${label}</span>
+                        <span style="color:#00ff88">${amount.toLocaleString()} Ar</span>
+                    </div>
+                </div>`;
+            }).join('');
+            if (refreshIcon) setTimeout(() => refreshIcon.classList.remove('fa-spin'), 500);
+        }
+        window.loadHistory = loadHistory;
+
+        async function fetchAdminStatus() {
+            const { data } = await supabase.from('admin').select('online').eq('id', 'status').single();
+            updateAdminUI(data?.online);
+        }
+
+        function updateAdminUI(isOnline) {
+            const statusSpan = document.querySelector('#adminStatusDisplay .status-text');
+            const statusDot = document.querySelector('#adminStatusDisplay .status-dot');
+            if (statusSpan && statusDot) {
+                statusSpan.innerText = isOnline ? "En ligne" : "Hors ligne";
+                statusSpan.className = isOnline ? "status-text status-online" : "status-text status-offline";
+                statusDot.className = isOnline ? "status-dot online" : "status-dot offline";
+            }
+        }
+
+        window.toggleTheme = function() {
+            document.body.classList.toggle('dark-blue-mode');
+            const isDark = document.body.classList.contains('dark-blue-mode');
+            localStorage.setItem('theme', isDark ? 'dark-blue' : 'normal');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('theme') === 'dark-blue') {
+                document.body.classList.add('dark-blue-mode');
+            }
+            // Cacher le loader après le chargement
+            const loader = document.getElementById('pageLoader');
+            if(loader) loader.style.display = 'none';
+
+            // Fetch initial admin status
+            fetchAdminStatus();
+
+            // Realtime listener for History (Orders & Deposits)
+            supabase.auth.getSession().then(({ data: { session } }) => {
+                const userUid = localStorage.getItem('userUid');
+                if (userUid || session) {
+                    const channel = supabase.channel('history_sync');
+                    if (userUid) channel.on('postgres_changes', { event: '*', schema: 'public', table: 'orders', filter: `uid=eq.${userUid}` }, () => { loadHistory(); });
+                    if (session) channel.on('postgres_changes', { event: '*', schema: 'public', table: 'deposits', filter: `user_id=eq.${session.user.id}` }, () => { loadHistory(); });
+                    channel.subscribe();
+                }
+            });
+
+            // Realtime listener for Admin Status
+            supabase.channel('admin_changes')
+                .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'admin', filter: 'id=eq.status' }, 
+                payload => updateAdminUI(payload.new.online))
+                .subscribe();
+        });
+    </script>
+</head>
+<body>
+    <div id="pageLoader">
+        <div class="loader-spinner"></div>
+        <div style="letter-spacing: 3px; font-size: 0.8rem;">CHARGEMENT...</div>
+    </div>
+
+    <div class="main-wrapper">
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-window" id="historyWindow">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid rgba(0,212,255,0.2); padding-bottom:10px;">
+                <h3 style="margin:0; color:var(--blue-line); font-family:'Orbitron'; font-size:1rem;">MES COMMANDES</h3>
+                <div style="display:flex; gap:15px; align-items:center;">
+                    <i class="fa-solid fa-rotate-right" id="refreshHistoryIcon" onclick="loadHistory()" style="cursor:pointer; color:var(--blue-line); font-size:0.9rem;" title="Actualiser"></i>
+                    <i class="fa-solid fa-xmark" onclick="toggleHistory()" style="cursor:pointer; color:#888;"></i>
+                </div>
+            </div>
+            <div id="historyList">Chargement...</div>
+        </div>
+
+        <header>
+            <img src="logo.jpg" alt="Logo" class="logo-square">
+            <div class="separator"></div>
+            <div class="brand">
+                <span class="blue-text">BOOYAH</span>
+                <span class="yellow-text">STORE</span>
+            </div>
+        </header>
+
+        <div class="blue-divider"></div>
+
+        <div id="adminStatusDisplay" class="admin-status-display">
+            Admin: <span class="status-dot"></span><span class="status-text">Chargement...</span>
+        </div>
+
+        <div class="search-container">
+            <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #888;"></i>
+            <input type="text" class="search-bar" placeholder="Rechercher..." style="padding-left: 40px;">
+        </div>
+
+        <div class="section-title">JEUX DISPONIBLES</div>
+
+        <div class="games-grid">
+            <!-- Les logos des jeux sont maintenant plus petits et espacés -->
+            <a href="javascript:void(0)" onclick="navigateTo('tarif.html')" class="game-card large">
+                <img src="free.png" alt="Free Fire">
+            </a>
+            <a href="javascript:void(0)" onclick="navigateTo('#')" class="game-card">
+                <img src="pubg.png" alt="PUBG Mobile">
+            </a>
+            <a href="javascript:void(0)" onclick="navigateTo('#')" class="game-card">
+                <img src="other.png" alt="Mobile Legends">
+            </a>
+            <a href="javascript:void(0)" onclick="navigateTo('#')" class="game-card">
+                <img src="roblox.png" alt="Roblox">
+            </a>
+            <a href="javascript:void(0)" onclick="navigateTo('#')" class="game-card">
+                <img src="bloood.ico" alt="Blood Strike">
+            </a>
+        </div>
+
+        <!-- Torolalana momba ny famenoana -->
+        <div class="instruction-box" style="text-align: center;">
+            <div class="instruction-title" style="text-align: center;">
+                📢 INSTRUCTIONS 📢
+            </div>
+            <div class="instruction-text">
+                Pour un traitement rapide de votre commande, veuillez entrer correctement les informations suivantes lors de l'achat : <br>
+                <div style="margin-top: 10px; padding-left: 5px;">
+                    💎 <strong>Player ID (UID)</strong> et le <strong>Nom (Pseudo FF)</strong>. <br>
+                    📱 <strong>Numéro</strong> utilisé pour l'envoi de l'argent. <br>
+                    💸 <strong>Transaction ID</strong> ou <strong>Ref</strong> reçu par Orange Money.
+                </div>
+            </div>
+            <div class="instruction-remark">
+                ⚠️ Remarque : Vérifiez toujours l'ID de Transaction avant de valider la commande.
+            </div>
+            <div class="blue-divider" style="margin: 20px auto;"></div> <!-- Séparateur -->
+            <div class="instruction-title" style="text-align: center;">
+                INFORMATION
+            </div>
+            <div class="footer-info centered">
+                <div class="footer-item">
+                    <i class="fa-brands fa-facebook"></i><span>booyah store</span>
+                </div>
+                <div class="footer-item">
+                    <i class="fa-brands fa-whatsapp" style="color: #25D366;"></i><span>0333828347</span>
+                </div>
+                <div class="footer-item">
+                    <i class="fa-solid fa-phone"></i><span>0333828347</span>
+                </div>
+            </div>
+        </div>
+
+        
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="javascript:void(0)" onclick="navigateTo('index.html')" class="nav-item">
+            <i class="fa-solid fa-house"></i>
+            <span>HOME</span>
+        </a>
+        <div class="nav-item" onclick="toggleHistory()" style="cursor: pointer;">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>HISTORIQUE</span>
+        </div>
+        <div class="nav-divider"></div>
+        <!-- Le logo plus vérifie maintenant la connexion -->
+        <div onclick="handlePlusClick()" class="plus-container" style="cursor: pointer;">
+            <i class="fa-solid fa-user"></i>
+        </div>
+        <div class="nav-divider"></div>
+        <a href="https://wa.me/261333828347" class="nav-item">
+            <i class="fa-brands fa-whatsapp"></i> <!-- Icône WhatsApp pour l'aide -->
+            <span>NEED HELP</span>
+        </a>
+        <div class="nav-divider"></div>
+        <!-- Le bouton de thème est maintenant un élément de la barre de navigation -->
+        <div class="nav-item" onclick="toggleTheme()">
+            <i class="fa-solid fa-circle-half-stroke"></i>
+            <span>THEME</span>
+        </div>
+    </nav>
+
+</body>
+</html>
